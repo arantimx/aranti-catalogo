@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Catálogo Arānti — Primavera 26'</title>
+<meta name="description" content="Productos extraordinarios para tu mesa. Vajillas, cristalería, cubiertos y complementos.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f7f3ee;
+  --cream-dark:#ede7dc;
+  --teal:#0d3d4a;
+  --teal-light:#1a5568;
+  --copper:#b8935a;
+  --copper-light:#d4aa78;
+  --text:#2c2420;
+  --muted:#8a7f75;
+  --wa:#25d366;
+}
+html,body{height:100%;background:var(--cream);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;overflow-x:hidden}
+
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--cream);border-bottom:1px solid var(--cream-dark);
+  height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;
+}
+.logo-wrap{display:flex;align-items:center;gap:14px;text-decoration:none}
+.logo-icon{width:34px;height:34px;flex-shrink:0}
+.logo-text{display:flex;flex-direction:column;gap:1px}
+.logo-name{font-family:'Jost',sans-serif;font-weight:200;font-size:17px;letter-spacing:.35em;color:var(--teal);text-transform:uppercase}
+.logo-season{font-size:9px;font-weight:300;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn-wa{
+  display:flex;align-items:center;gap:7px;background:var(--wa);color:white;
+  padding:9px 18px;border-radius:2px;font-size:12px;font-weight:300;letter-spacing:.08em;
+  text-decoration:none;transition:opacity .15s;white-space:nowrap;font-family:'Jost',sans-serif;
+}
+.btn-wa:hover{opacity:.88}
+.btn-wa svg{width:15px;height:15px;fill:white;flex-shrink:0}
+.btn-dl{
+  display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--cream-dark);
+  padding:8px 14px;border-radius:2px;font-size:12px;color:var(--muted);cursor:pointer;
+  text-decoration:none;transition:all .15s;font-family:'Jost',sans-serif;font-weight:300;letter-spacing:.05em;
+}
+.btn-dl:hover{border-color:var(--copper);color:var(--copper)}
+
+.sections-nav{
+  margin-top:64px;background:var(--teal);
+  display:flex;overflow-x:auto;padding:0 32px;
+  scrollbar-width:none;border-bottom:1px solid var(--teal-light);
+}
+.sections-nav::-webkit-scrollbar{display:none}
+.snav-btn{
+  padding:14px 20px;font-family:'Jost',sans-serif;font-size:11px;font-weight:300;
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);
+  background:none;border:none;border-bottom:2px solid transparent;
+  cursor:pointer;white-space:nowrap;transition:all .2s;margin-bottom:-1px;
+}
+.snav-btn:hover{color:rgba(255,255,255,.85)}
+.snav-btn.active{color:var(--copper-light);border-bottom-color:var(--copper-light)}
+
+.viewer-area{
+  background:var(--cream-dark);
+  min-height:calc(100vh - 64px - 48px);
+  display:flex;flex-direction:column;align-items:center;
+  padding:32px 20px 100px;position:relative;
+  overflow:hidden;
+}
+
+#page-container{width:100%;max-width:800px;position:relative;min-height:300px}
+
+.page-wrap{
+  background:white;
+  box-shadow:0 8px 40px rgba(44,36,32,.15);
+  width:100%;
+}
+.page-wrap canvas{display:block;width:100%;height:auto}
+
+.page-wrap.slide-out-left{animation:slideOutLeft .28s ease-in forwards}
+.page-wrap.slide-out-right{animation:slideOutRight .28s ease-in forwards}
+.page-wrap.slide-in-right{animation:slideInRight .3s ease-out forwards}
+.page-wrap.slide-in-left{animation:slideInLeft .3s ease-out forwards}
+
+@keyframes slideOutLeft{0%{transform:translateX(0);opacity:1}100%{transform:translateX(-60px);opacity:0}}
+@keyframes slideOutRight{0%{transform:translateX(0);opacity:1}100%{transform:translateX(60px);opacity:0}}
+@keyframes slideInRight{0%{transform:translateX(60px);opacity:0}100%{transform:translateX(0);opacity:1}}
+@keyframes slideInLeft{0%{transform:translateX(-60px);opacity:0}100%{transform:translateX(0);opacity:1}}
+
+.pdf-loading{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:100px 20px;color:var(--muted);font-size:12px;letter-spacing:.1em;
+}
+.pdf-spinner{
+  width:28px;height:28px;border:1.5px solid var(--cream-dark);
+  border-top-color:var(--copper);border-radius:50%;animation:spin .9s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.touch-hint{
+  margin-top:16px;font-size:11px;letter-spacing:.1em;color:var(--muted);
+  display:none;text-align:center;
+}
+
+.pdf-controls{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  background:var(--teal);border-radius:2px;padding:10px 24px;
+  display:flex;align-items:center;gap:20px;
+  box-shadow:0 4px 24px rgba(13,61,74,.3);z-index:50;white-space:nowrap;
+}
+.ctrl-btn{
+  background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;
+  padding:4px 8px;font-size:16px;transition:color .15s;display:flex;align-items:center;
+}
+.ctrl-btn:hover{color:var(--copper-light)}
+.ctrl-btn:disabled{opacity:.2;cursor:default}
+.page-info{
+  font-family:'Jost',sans-serif;font-size:11px;font-weight:300;letter-spacing:.1em;
+  color:rgba(255,255,255,.5);min-width:70px;text-align:center;
+}
+.ctrl-sep{width:1px;height:16px;background:rgba(255,255,255,.15)}
+
+.wa-float{
+  position:fixed;bottom:100px;right:28px;background:var(--wa);color:white;
+  width:50px;height:50px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(37,211,102,.35);text-decoration:none;z-index:60;
+  transition:transform .15s;
+}
+.wa-float:hover{transform:scale(1.08)}
+.wa-float svg{width:22px;height:22px;fill:white}
+
+footer{
+  background:var(--teal);padding:28px 32px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;margin-bottom:60px;
+}
+.footer-logo{font-family:'Jost',sans-serif;font-weight:200;font-size:16px;letter-spacing:.35em;color:rgba(255,255,255,.7);text-transform:uppercase}
+.footer-links{display:flex;gap:20px;font-size:11px;font-weight:300;letter-spacing:.08em;color:rgba(255,255,255,.4)}
+.footer-links a{color:rgba(255,255,255,.4);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--copper-light)}
+
+@media(max-width:768px){
+  header{padding:0 16px;height:56px}
+  .logo-name{font-size:15px;letter-spacing:.25em}
+  .sections-nav{padding:0 12px;margin-top:56px}
+  .snav-btn{padding:12px 14px;font-size:10px;letter-spacing:.1em}
+  .viewer-area{padding:16px 8px 100px}
+  .pdf-controls{bottom:20px;padding:9px 16px;gap:14px}
+  .wa-float{bottom:90px;right:16px}
+  footer{padding:20px 16px}
+  .btn-wa span{display:none}
+  .btn-wa{padding:9px 12px}
+  .touch-hint{display:block}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="https://aranti.mx">
+    <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="43" stroke="#b8935a" stroke-width="2.5"/>
+      <line x1="50" y1="8" x2="50" y2="50" stroke="#b8935a" stroke-width="2"/>
+      <path d="M50 50 Q50 80 50 80" stroke="#b8935a" stroke-width="2"/>
+      <path d="M27 50 Q27 80 50 80 Q73 80 73 50" stroke="#b8935a" stroke-width="2" fill="none"/>
+      <line x1="50" y1="80" x2="50" y2="90" stroke="#b8935a" stroke-width="2"/>
+      <line x1="37" y1="90" x2="63" y2="90" stroke="#b8935a" stroke-width="2"/>
+      <line x1="27" y1="50" x2="73" y2="50" stroke="#b8935a" stroke-width="2"/>
+      <path d="M50 8 Q27 8 27 50" stroke="#b8935a" stroke-width="2" fill="none"/>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-name">Arānti</span>
+      <span class="logo-season">Primavera 26'</span>
+    </div>
+  </a>
+  <div class="header-actions">
+    <a class="btn-dl" href="catalogo.pdf" download="Catalogo-Aranti-Primavera26.pdf">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      PDF
+    </a>
+    <a class="btn-wa" href="https://wa.me/525624845101?text=Hola%2C%20me%20interesa%20el%20cat%C3%A1logo%20Primavera%2026" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span>Pedir por WhatsApp</span>
+    </a>
+  </div>
+</header>
+
+<nav class="sections-nav">
+  <button class="snav-btn active" data-page="1" onclick="sectionNav(this)">Catálogo</button>
+  <button class="snav-btn" data-page="4" onclick="sectionNav(this)">Cristalería</button>
+  <button class="snav-btn" data-page="44" onclick="sectionNav(this)">Vajillas</button>
+  <button class="snav-btn" data-page="68" onclick="sectionNav(this)">Exterior</button>
+  <button class="snav-btn" data-page="78" onclick="sectionNav(this)">Revol</button>
+  <button class="snav-btn" data-page="86" onclick="sectionNav(this)">Cubiertos</button>
+  <button class="snav-btn" data-page="94" onclick="sectionNav(this)">Complementos</button>
+</nav>
+
+<div class="viewer-area" id="viewer-area">
+  <div id="page-container">
+    <div class="pdf-loading" id="loading">
+      <div class="pdf-spinner"></div>
+      <span>Cargando catálogo</span>
+    </div>
+  </div>
+  <div class="touch-hint">← Desliza para cambiar página →</div>
+</div>
+
+<div class="pdf-controls" id="pdf-controls" style="display:none">
+  <button class="ctrl-btn" id="btn-first" onclick="goToPage(1)">«</button>
+  <button class="ctrl-btn" id="btn-prev" onclick="navigate(-1)">‹</button>
+  <span class="page-info" id="page-info">1 / 1</span>
+  <button class="ctrl-btn" id="btn-next" onclick="navigate(1)">›</button>
+  <button class="ctrl-btn" id="btn-last" onclick="goToPage(totalPages)">»</button>
+</div>
+
+<a class="wa-float" href="https://wa.me/525624845101?text=Hola%2C%20vi%20el%20cat%C3%A1logo%20Primavera%2026%20y%20me%20gustar%C3%ADa%20saber%20m%C3%A1s" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<footer>
+  <div class="footer-logo">Arānti</div>
+  <div class="footer-links">
+    <a href="https://aranti.mx">Tienda en línea</a>
+    <a href="https://wa.me/525624845101">WhatsApp</a>
+    <a href="mailto:ventas@aranti.mx">ventas@aranti.mx</a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let pdfDoc=null,currentPage=1,totalPages=0,rendering=false,scale=1.4;
+let touchStartX=0,touchStartY=0,touchLocked=false;
+const SECTION_PAGES=[1,4,44,68,78,86,94];
+
+const container=document.getElementById('page-container');
+const loading=document.getElementById('loading');
+const controls=document.getElementById('pdf-controls');
+const pageInfo=document.getElementById('page-info');
+
+function calcScale(){
+  const maxW=Math.min(window.innerWidth-40,800);
+  scale=maxW/595;
+}
+
+async function loadPDF(){
+  try{
+    calcScale();
+    const task=pdfjsLib.getDocument('catalogo.pdf');
+    pdfDoc=await task.promise;
+    totalPages=pdfDoc.numPages;
+    loading.style.display='none';
+    controls.style.display='flex';
+    await renderPage(1,null);
+    setupSwipe();
+  }catch(e){
+    loading.innerHTML='<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8a7f75" stroke-width="1"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="letter-spacing:.08em;font-size:12px">Catálogo no disponible</span><a href="https://wa.me/525624845101" style="color:#b8935a;font-size:11px;letter-spacing:.1em;text-decoration:none">Contactar por WhatsApp</a>';
+  }
+}
+
+async function renderPage(num,direction){
+  if(rendering||!pdfDoc)return;
+  rendering=true;
+  currentPage=Math.max(1,Math.min(num,totalPages));
+
+  const page=await pdfDoc.getPage(currentPage);
+  const viewport=page.getViewport({scale});
+  const wrap=document.createElement('div');
+  wrap.className='page-wrap';
+  const canvas=document.createElement('canvas');
+  canvas.width=viewport.width;
+  canvas.height=viewport.height;
+  wrap.appendChild(canvas);
+  await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+
+  const old=container.querySelector('.page-wrap');
+  if(old&&direction){
+    old.classList.add(direction==='next'?'slide-out-left':'slide-out-right');
+    wrap.classList.add(direction==='next'?'slide-in-right':'slide-in-left');
+    setTimeout(()=>old.remove(),280);
+  } else if(old){
+    old.remove();
+  }
+  container.appendChild(wrap);
+  updateControls();
+  updateSectionNav();
+  rendering=false;
+}
+
+function navigate(dir){
+  if(dir>0&&currentPage<totalPages) renderPage(currentPage+1,'next');
+  if(dir<0&&currentPage>1) renderPage(currentPage-1,'prev');
+}
+
+function goToPage(n){
+  const dir=n>currentPage?'next':'prev';
+  renderPage(n,n!==currentPage?dir:null);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sectionNav(btn){
+  document.querySelectorAll('.snav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  goToPage(parseInt(btn.dataset.page));
+}
+
+function updateControls(){
+  pageInfo.textContent=currentPage+' / '+totalPages;
+  document.getElementById('btn-prev').disabled=currentPage<=1;
+  document.getElementById('btn-first').disabled=currentPage<=1;
+  document.getElementById('btn-next').disabled=currentPage>=totalPages;
+  document.getElementById('btn-last').disabled=currentPage>=totalPages;
+}
+
+function updateSectionNav(){
+  let active=0;
+  for(let i=0;i<SECTION_PAGES.length;i++){if(currentPage>=SECTION_PAGES[i])active=i;}
+  document.querySelectorAll('.snav-btn').forEach((b,i)=>b.classList.toggle('active',i===active));
+}
+
+function setupSwipe(){
+  const area=document.getElementById('viewer-area');
+  area.addEventListener('touchstart',e=>{
+    touchStartX=e.touches[0].clientX;
+    touchStartY=e.touches[0].clientY;
+    touchLocked=false;
+  },{passive:true});
+  area.addEventListener('touchmove',e=>{
+    if(touchLocked)return;
+    const dx=e.touches[0].clientX-touchStartX;
+    const dy=e.touches[0].clientY-touchStartY;
+    if(Math.abs(dx)>Math.abs(dy))touchLocked=true;
+  },{passive:true});
+  area.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    const dy=e.changedTouches[0].clientY-touchStartY;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+      dx<0?navigate(1):navigate(-1);
+    }
+  },{passive:true});
+}
+
+window.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1);
+});
+
+window.addEventListener('resize',()=>{calcScale();if(pdfDoc)renderPage(currentPage,null);});
+
+loadPDF();
+</script>
+</body>
+</html>
