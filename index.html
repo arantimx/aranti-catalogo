@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Aranti — Primavera 26'</title>
+<meta name="description" content="Descubre nuestra selección de vajillas, cristalería, cubiertos y complementos para tu mesa.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --black:#0f0e0d;
+    --white:#ffffff;
+    --gray-50:#fafaf9;
+    --gray-100:#f4f3f0;
+    --gray-200:#e8e6e1;
+    --gray-400:#a8a49c;
+    --gray-600:#6b6760;
+    --accent:#b8935a;
+    --accent-light:#f5ead9;
+    --wa:#25d366;
+  }
+  html,body{height:100%;background:var(--white);color:var(--black);font-family:'DM Sans',sans-serif}
+
+  /* HEADER */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:var(--white);
+    border-bottom:1px solid var(--gray-200);
+    height:56px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 28px;
+  }
+  .logo{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+  .logo-mark{font-family:'DM Serif Display',serif;font-size:20px;color:var(--black);letter-spacing:.02em}
+  .logo-season{font-size:11px;font-weight:300;color:var(--gray-400);letter-spacing:.1em;text-transform:uppercase}
+  .header-actions{display:flex;align-items:center;gap:12px}
+  .btn-wa{
+    display:flex;align-items:center;gap:7px;
+    background:var(--wa);color:white;
+    padding:8px 16px;border-radius:6px;
+    font-size:13px;font-weight:500;
+    text-decoration:none;transition:opacity .15s;
+    white-space:nowrap;
+  }
+  .btn-wa:hover{opacity:.88}
+  .btn-wa svg{width:16px;height:16px;fill:white;flex-shrink:0}
+  .btn-download{
+    display:flex;align-items:center;gap:6px;
+    background:none;border:1px solid var(--gray-200);
+    padding:7px 14px;border-radius:6px;
+    font-size:13px;color:var(--gray-600);cursor:pointer;
+    text-decoration:none;transition:all .15s;
+  }
+  .btn-download:hover{border-color:var(--gray-400);color:var(--black)}
+
+  /* HERO */
+  .hero{
+    margin-top:56px;
+    padding:48px 28px 32px;
+    display:flex;align-items:flex-end;justify-content:space-between;
+    border-bottom:1px solid var(--gray-200);
+    gap:20px;flex-wrap:wrap;
+  }
+  .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,44px);font-weight:400;line-height:1.1;color:var(--black)}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero-meta{font-size:13px;color:var(--gray-400);margin-top:10px;line-height:1.7}
+  .hero-stats{display:flex;gap:28px;flex-wrap:wrap}
+  .stat{text-align:center}
+  .stat-n{font-family:'DM Serif Display',serif;font-size:28px;color:var(--black)}
+  .stat-l{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+  /* SECTIONS NAV */
+  .sections-nav{
+    display:flex;gap:0;
+    overflow-x:auto;
+    border-bottom:1px solid var(--gray-200);
+    padding:0 28px;
+    scrollbar-width:none;
+  }
+  .sections-nav::-webkit-scrollbar{display:none}
+  .snav-btn{
+    padding:14px 20px;font-size:13px;font-weight:400;
+    color:var(--gray-600);background:none;border:none;
+    border-bottom:2px solid transparent;cursor:pointer;
+    white-space:nowrap;transition:all .15s;margin-bottom:-1px;
+  }
+  .snav-btn:hover{color:var(--black)}
+  .snav-btn.active{color:var(--black);border-bottom-color:var(--black);font-weight:500}
+
+  /* VIEWER */
+  .viewer-wrap{
+    display:flex;flex-direction:column;
+    min-height:calc(100vh - 56px - 120px - 48px);
+  }
+
+  /* PDF VIEWER */
+  #pdf-container{
+    flex:1;
+    background:var(--gray-100);
+    display:flex;flex-direction:column;align-items:center;
+    padding:28px 20px;
+    gap:20px;
+    min-height:500px;
+  }
+  .pdf-loading{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:16px;padding:80px 20px;color:var(--gray-400);
+    font-size:14px;
+  }
+  .pdf-spinner{
+    width:32px;height:32px;border:2px solid var(--gray-200);
+    border-top-color:var(--accent);border-radius:50%;
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .page-wrap{
+    background:white;
+    box-shadow:0 1px 4px rgba(0,0,0,.08);
+    display:block;max-width:100%;
+  }
+  .page-wrap canvas{display:block;max-width:100%;height:auto}
+
+  /* CONTROLS */
+  .pdf-controls{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--black);color:white;
+    border-radius:8px;padding:10px 20px;
+    display:flex;align-items:center;gap:16px;
+    box-shadow:0 4px 20px rgba(0,0,0,.2);
+    z-index:50;font-size:13px;
+    white-space:nowrap;
+  }
+  .ctrl-btn{
+    background:none;border:none;color:white;cursor:pointer;
+    padding:4px 8px;border-radius:4px;font-size:14px;
+    transition:background .12s;display:flex;align-items:center;
+  }
+  .ctrl-btn:hover{background:rgba(255,255,255,.15)}
+  .ctrl-btn:disabled{opacity:.3;cursor:default}
+  .page-info{font-size:12px;color:rgba(255,255,255,.6);min-width:80px;text-align:center}
+  .zoom-btn{background:none;border:none;color:white;cursor:pointer;padding:4px 6px;font-size:16px;border-radius:4px;transition:background .12s}
+  .zoom-btn:hover{background:rgba(255,255,255,.15)}
+  .ctrl-sep{width:1px;height:20px;background:rgba(255,255,255,.2)}
+
+  /* NO PDF STATE */
+  .no-pdf{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:80px 20px;gap:16px;text-align:center;
+    color:var(--gray-400);
+  }
+  .no-pdf h3{font-size:18px;font-weight:400;color:var(--gray-600)}
+  .no-pdf p{font-size:14px;line-height:1.7;max-width:360px}
+
+  /* FOOTER */
+  footer{
+    border-top:1px solid var(--gray-200);
+    padding:28px;
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:16px;
+    margin-bottom:60px;
+  }
+  .footer-brand{font-family:'DM Serif Display',serif;font-size:18px;color:var(--black)}
+  .footer-links{display:flex;gap:20px;font-size:13px;color:var(--gray-400)}
+  .footer-links a{color:var(--gray-400);text-decoration:none}
+  .footer-links a:hover{color:var(--black)}
+
+  /* WA FLOAT */
+  .wa-float{
+    position:fixed;bottom:88px;right:24px;
+    background:var(--wa);color:white;
+    width:52px;height:52px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 16px rgba(37,211,102,.4);
+    text-decoration:none;z-index:60;
+    transition:transform .15s;
+  }
+  .wa-float:hover{transform:scale(1.08)}
+  .wa-float svg{width:24px;height:24px;fill:white}
+
+  @media(max-width:600px){
+    .hero{padding:32px 16px 24px}
+    header{padding:0 16px}
+    .sections-nav{padding:0 16px}
+    footer{padding:20px 16px}
+    .hero-stats{gap:16px}
+    .pdf-controls{bottom:16px;padding:8px 14px;gap:10px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="https://aranti.mx">
+    <span class="logo-mark">Aranti</span>
+    <span class="logo-season">Primavera 26'</span>
+  </a>
+  <div class="header-actions">
+    <a class="btn-download" id="btn-dl" href="https://drive.google.com/uc?export=download&id=1WU5A02Y3tOGdmbMAXJ23Lh_MMb69cEDl" download="Catalogo-Aranti-Primavera26.pdf">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      PDF
+    </a>
+    <a class="btn-wa" href="https://wa.me/525624845101?text=Hola%2C%20me%20interesa%20el%20cat%C3%A1logo%20Primavera%2026" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Pedir por WhatsApp
+    </a>
+  </div>
+</header>
+
+<div class="hero">
+  <div>
+    <h1>Productos <em>extraordinarios</em><br>para tu mesa</h1>
+    <div class="hero-meta">Vajillas · Cristalería · Cubiertos · Exterior · Complementos<br>Precios netos + IVA · Envío a toda la república</div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">Secciones</div></div>
+    <div class="stat"><div class="stat-n">360+</div><div class="stat-l">Productos</div></div>
+    <div class="stat"><div class="stat-n">P26</div><div class="stat-l">Temporada</div></div>
+  </div>
+</div>
+
+<nav class="sections-nav" id="sections-nav">
+  <button class="snav-btn active" onclick="jumpToPage(1)">Todo el catálogo</button>
+  <button class="snav-btn" onclick="jumpToPage(2)">Cristalería</button>
+  <button class="snav-btn" onclick="jumpToPage(2)">Vajillas</button>
+  <button class="snav-btn" onclick="jumpToPage(2)">Exterior</button>
+  <button class="snav-btn" onclick="jumpToPage(2)">Revol</button>
+  <button class="snav-btn" onclick="jumpToPage(2)">Cubiertos</button>
+  <button class="snav-btn" onclick="jumpToPage(2)">Complementos</button>
+</nav>
+
+<div class="viewer-wrap">
+  <div id="pdf-container">
+    <div class="no-pdf" id="no-pdf">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#a8a49c" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <h3>Catálogo cargando</h3>
+      <p>Si el catálogo no carga, descarga el PDF directamente o contáctanos por WhatsApp.</p>
+      <a class="btn-wa" href="https://wa.me/525624845101" target="_blank" style="margin-top:8px">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Contactar por WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="pdf-controls" id="pdf-controls" style="display:none">
+  <button class="ctrl-btn" id="btn-first" onclick="goToPage(1)" title="Primera página">«</button>
+  <button class="ctrl-btn" id="btn-prev" onclick="goToPage(currentPage-1)" title="Anterior">‹</button>
+  <span class="page-info" id="page-info">1 / 1</span>
+  <button class="ctrl-btn" id="btn-next" onclick="goToPage(currentPage+1)" title="Siguiente">›</button>
+  <button class="ctrl-btn" id="btn-last" onclick="goToPage(totalPages)" title="Última página">»</button>
+  <span class="ctrl-sep"></span>
+  <button class="zoom-btn" onclick="changeZoom(-0.2)" title="Alejar">−</button>
+  <button class="zoom-btn" onclick="changeZoom(0.2)" title="Acercar">+</button>
+</div>
+
+<a class="wa-float" href="https://wa.me/525624845101?text=Hola%2C%20vi%20el%20cat%C3%A1logo%20Primavera%2026%20y%20me%20gustar%C3%ADa%20hacer%20un%20pedido" target="_blank" title="Pedir por WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<footer>
+  <div class="footer-brand">Aranti</div>
+  <div class="footer-links">
+    <a href="https://aranti.mx">Tienda en línea</a>
+    <a href="https://wa.me/525624845101">WhatsApp</a>
+    <a href="mailto:ventas@aranti.mx">ventas@aranti.mx</a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const PDF_FILE = 'https://drive.google.com/uc?export=download&id=1WU5A02Y3tOGdmbMAXJ23Lh_MMb69cEDl';
+const WA_NUMBER = '525624845101';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let pdfDoc = null, currentPage = 1, totalPages = 0, scale = 1.0, rendering = false;
+
+const container = document.getElementById('pdf-container');
+const noPdf = document.getElementById('no-pdf');
+const controls = document.getElementById('pdf-controls');
+const pageInfo = document.getElementById('page-info');
+
+async function loadPDF() {
+  try {
+    const loadingTask = pdfjsLib.getDocument(PDF_FILE);
+    pdfDoc = await loadingTask.promise;
+    totalPages = pdfDoc.numPages;
+    noPdf.style.display = 'none';
+    controls.style.display = 'flex';
+    document.getElementById('btn-dl').href = PDF_FILE;
+    autoScale();
+    await renderPage(1);
+  } catch(e) {
+    console.log('PDF not found:', e.message);
+  }
+}
+
+function autoScale() {
+  const w = Math.min(window.innerWidth - 56, 860);
+  scale = w / 595;
+}
+
+async function renderPage(num) {
+  if (rendering || !pdfDoc) return;
+  rendering = true;
+  currentPage = Math.max(1, Math.min(num, totalPages));
+  updateControls();
+
+  const page = await pdfDoc.getPage(currentPage);
+  const viewport = page.getViewport({scale});
+  
+  let wrap = document.getElementById('page-canvas-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'page-canvas-wrap';
+    wrap.className = 'page-wrap';
+    container.innerHTML = '';
+    container.appendChild(wrap);
+  }
+
+  let canvas = wrap.querySelector('canvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    wrap.appendChild(canvas);
+  }
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  canvas.style.maxWidth = '100%';
+
+  const ctx = canvas.getContext('2d');
+  await page.render({canvasContext: ctx, viewport}).promise;
+  rendering = false;
+}
+
+function updateControls() {
+  pageInfo.textContent = `${currentPage} / ${totalPages}`;
+  document.getElementById('btn-prev').disabled = currentPage <= 1;
+  document.getElementById('btn-first').disabled = currentPage <= 1;
+  document.getElementById('btn-next').disabled = currentPage >= totalPages;
+  document.getElementById('btn-last').disabled = currentPage >= totalPages;
+  updateNavBtns();
+}
+
+function updateNavBtns() {
+  document.querySelectorAll('.snav-btn').forEach((b,i) => b.classList.toggle('active', i === 0));
+}
+
+function goToPage(n) { renderPage(n); window.scrollTo({top: 220, behavior:'smooth'}); }
+function jumpToPage(n) { goToPage(n); }
+function changeZoom(delta) {
+  scale = Math.max(0.5, Math.min(3, scale + delta));
+  renderPage(currentPage);
+}
+
+window.addEventListener('resize', () => { autoScale(); renderPage(currentPage); });
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goToPage(currentPage+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goToPage(currentPage-1);
+});
+
+loadPDF();
+</script>
+</body>
+</html>
