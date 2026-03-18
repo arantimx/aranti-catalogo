@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arānti Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f7f3ee;--cream-dark:#ede7dc;--teal:#0d3d4a;--teal-light:#1a5568;
+  --copper:#b8935a;--copper-light:#d4aa78;--text:#2c2420;--muted:#8a7f75;
+  --surface:#fff;--border:#e2ddd7;
+  --green:#2d6e4e;--green-light:#e8f5ee;
+  --red:#b83232;--red-light:#fceaea;
+  --amber:#c47a0a;--amber-light:#fef3db;
+}
+html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--cream);color:var(--text)}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--teal)}
+.login-card{background:var(--surface);border-radius:4px;padding:48px 40px;width:100%;max-width:360px;text-align:center}
+.login-icon{margin:0 auto 20px;width:48px;height:48px}
+.login-logo{font-weight:200;font-size:22px;letter-spacing:.35em;color:var(--teal);text-transform:uppercase;margin-bottom:4px}
+.login-sub{font-size:11px;letter-spacing:.15em;color:var(--muted);margin-bottom:32px;text-transform:uppercase}
+.login-field{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:2px;font-size:13px;font-family:'Jost',sans-serif;font-weight:300;background:var(--cream);color:var(--text);margin-bottom:12px;outline:none;letter-spacing:.05em}
+.login-field:focus{border-color:var(--copper)}
+.login-btn{width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:2px;font-size:12px;font-weight:400;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif;transition:opacity .15s}
+.login-btn:hover{opacity:.85}
+.login-err{font-size:12px;color:var(--red);margin-top:8px;display:none;letter-spacing:.05em}
+
+/* APP */
+#app{display:none;min-height:100vh;flex-direction:column}
+
+/* HEADER */
+.hdr{background:var(--teal);color:white;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0;position:sticky;top:0;z-index:100}
+.hdr-brand{font-weight:200;font-size:16px;letter-spacing:.3em;text-transform:uppercase}
+.hdr-brand span{font-size:10px;font-weight:300;opacity:.4;margin-left:10px;letter-spacing:.15em}
+.hdr-right{display:flex;align-items:center;gap:16px}
+.hdr-stat{font-size:11px;letter-spacing:.08em;opacity:.6}
+.hdr-stat strong{color:var(--copper-light);font-weight:400;margin-right:4px}
+
+/* TABS */
+.tabs{background:var(--teal);border-top:1px solid rgba(255,255,255,.08);display:flex;padding:0 28px}
+.tab-btn{padding:12px 20px;font-family:'Jost',sans-serif;font-size:11px;font-weight:300;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;margin-bottom:-1px}
+.tab-btn:hover{color:rgba(255,255,255,.8)}
+.tab-btn.active{color:var(--copper-light);border-bottom-color:var(--copper-light)}
+
+/* CONTENT */
+.tab-content{display:none;flex:1}
+.tab-content.active{display:block}
+
+/* SECTION CARD */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin:24px 28px;overflow:hidden}
+.section-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.section-title{font-size:14px;font-weight:400;letter-spacing:.05em;color:var(--text)}
+.section-desc{font-size:12px;color:var(--muted);margin-top:3px;letter-spacing:.03em}
+.section-body{padding:24px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:2px;font-size:12px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;font-family:'Jost',sans-serif;border:none;white-space:nowrap}
+.btn-primary{background:var(--teal);color:white}
+.btn-primary:hover{background:var(--teal-light)}
+.btn-primary:disabled{opacity:.4;cursor:default}
+.btn-copper{background:var(--copper);color:white}
+.btn-copper:hover{background:var(--copper-light)}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--copper);color:var(--copper)}
+.btn-green{background:var(--green);color:white}
+.btn-green:hover{opacity:.88}
+.btn-sm{padding:6px 14px;font-size:11px}
+
+/* SETTINGS FORM */
+.form-group{margin-bottom:20px}
+.form-label{font-size:11px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block}
+.form-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-size:13px;font-family:'Jost',sans-serif;font-weight:300;background:var(--cream);color:var(--text);outline:none;letter-spacing:.03em}
+.form-input:focus{border-color:var(--copper)}
+.form-input[type=password]{letter-spacing:.1em}
+.form-hint{font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:.03em}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* STATUS BADGE */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:2px;font-size:11px;letter-spacing:.05em}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* UPLOAD AREA */
+.upload-area{border:1.5px dashed var(--border);border-radius:4px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream)}
+.upload-area:hover,.upload-area.dragover{border-color:var(--copper);background:var(--cream-dark)}
+.upload-icon{font-size:32px;margin-bottom:12px;opacity:.4}
+.upload-title{font-size:14px;font-weight:400;color:var(--text);margin-bottom:6px}
+.upload-sub{font-size:12px;color:var(--muted);letter-spacing:.03em}
+#pdf-file-input{display:none}
+
+/* PROGRESS */
+.progress-wrap{margin-top:16px;display:none}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.progress-fill{height:100%;background:var(--copper);border-radius:2px;transition:width .3s;width:0%}
+.progress-label{font-size:12px;color:var(--muted);letter-spacing:.03em}
+
+/* ALERT */
+.alert{padding:12px 16px;border-radius:2px;font-size:12px;letter-spacing:.03em;margin-top:12px;display:none}
+.alert-success{background:var(--green-light);color:var(--green);border-left:3px solid var(--green)}
+.alert-error{background:var(--red-light);color:var(--red);border-left:3px solid var(--red)}
+.alert-info{background:var(--amber-light);color:var(--amber);border-left:3px solid var(--amber)}
+
+/* PRODUCTS */
+.prod-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:5px 14px;border-radius:2px;border:1px solid var(--border);background:var(--surface);font-size:11px;letter-spacing:.08em;cursor:pointer;color:var(--muted);transition:all .15s;font-family:'Jost',sans-serif}
+.filter-btn:hover{border-color:var(--copper);color:var(--copper)}
+.filter-btn.active{background:var(--text);color:white;border-color:var(--text)}
+.search-input{padding:7px 12px;border:1px solid var(--border);border-radius:2px;font-size:12px;font-family:'Jost',sans-serif;font-weight:300;background:var(--surface);color:var(--text);outline:none;min-width:200px;letter-spacing:.03em}
+.search-input:focus{border-color:var(--copper)}
+.cat-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{padding:10px 16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:'Jost',sans-serif;margin-bottom:-1px}
+.cat-tab:hover{color:var(--text)}
+.cat-tab.active{color:var(--copper);border-bottom-color:var(--copper);font-weight:400}
+
+/* PRODUCT CARD */
+.prod-list{display:flex;flex-direction:column;gap:6px}
+.prod-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;overflow:hidden;transition:border-color .15s}
+.prod-card.approved{border-color:var(--green)}
+.prod-card.skipped{opacity:.4}
+.prod-grid{display:grid;grid-template-columns:1fr 180px 150px 120px}
+.prod-cell{padding:11px 14px;border-right:1px solid var(--border)}
+.prod-cell:last-child{border-right:none}
+.prod-name{font-size:13px;font-weight:400;color:var(--text);margin-bottom:4px;line-height:1.3}
+.prod-col{font-size:11px;color:var(--muted);letter-spacing:.03em}
+.prod-tags{display:flex;gap:4px;margin-top:5px}
+.prod-tag{font-size:10px;padding:2px 6px;border-radius:2px;background:var(--cream);color:var(--muted);letter-spacing:.03em}
+.prod-tag.new{background:var(--green-light);color:var(--green)}
+.prod-tag.bundle{background:#e6eef9;color:#2558a0}
+.sku-input{width:100%;padding:6px 9px;border:1px solid var(--border);border-radius:2px;font-family:monospace;font-size:12px;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s}
+.sku-input:focus{border-color:var(--copper);background:white}
+.sku-input.filled{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.sku-hint{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.03em}
+.price-num{font-size:18px;font-weight:400;margin-bottom:3px}
+.price-meta{font-size:11px;color:var(--muted)}
+.prod-actions{padding:10px 10px;display:flex;flex-direction:column;gap:5px;justify-content:center}
+.btn-approve{width:100%;padding:7px;border-radius:2px;border:1px solid var(--green);background:var(--green);color:white;font-size:11px;font-weight:400;letter-spacing:.08em;cursor:pointer;font-family:'Jost',sans-serif;transition:all .12s}
+.btn-approve:hover{opacity:.88}
+.btn-approve.done{box-shadow:0 0 0 2px rgba(45,110,78,.2)}
+.btn-skip{width:100%;padding:6px;border-radius:2px;border:1px solid var(--border);background:none;font-size:10px;letter-spacing:.08em;color:var(--muted);cursor:pointer;font-family:'Jost',sans-serif;transition:all .12s}
+.btn-skip:hover{background:var(--cream)}
+.dec-label{font-size:10px;text-align:center;font-weight:400;padding-top:2px;letter-spacing:.05em}
+.dec-label.approved{color:var(--green)}.dec-label.skipped{color:var(--muted)}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+
+/* PROGRESS BAR */
+.prog-section{padding:0 28px 24px}
+.prog-meta{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.prog-bar-wrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.prog-bar-fill{height:100%;background:var(--copper);border-radius:2px;transition:width .4s}
+
+/* SHOPIFY STATUS */
+.shopify-results{margin-top:16px;display:none}
+.result-item{padding:8px 12px;border-radius:2px;font-size:12px;margin-bottom:4px;letter-spacing:.03em}
+.result-ok{background:var(--green-light);color:var(--green)}
+.result-err{background:var(--red-light);color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <svg class="login-icon" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="43" stroke="#b8935a" stroke-width="2.5"/>
+      <line x1="50" y1="8" x2="50" y2="50" stroke="#b8935a" stroke-width="2"/>
+      <path d="M27 50 Q27 80 50 80 Q73 80 73 50" stroke="#b8935a" stroke-width="2" fill="none"/>
+      <line x1="50" y1="80" x2="50" y2="90" stroke="#b8935a" stroke-width="2"/>
+      <line x1="37" y1="90" x2="63" y2="90" stroke="#b8935a" stroke-width="2"/>
+      <line x1="27" y1="50" x2="73" y2="50" stroke="#b8935a" stroke-width="2"/>
+      <path d="M50 8 Q27 8 27 50" stroke="#b8935a" stroke-width="2" fill="none"/>
+    </svg>
+    <div class="login-logo">Arānti</div>
+    <div class="login-sub">Panel de administración</div>
+    <input type="password" class="login-field" id="pwd-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="hdr">
+    <div>
+      <span class="hdr-brand">Arānti <span>Admin · Primavera 26'</span></span>
+    </div>
+    <div class="hdr-right">
+      <span class="hdr-stat"><strong id="cnt-a">0</strong>aprobados</span>
+      <span class="hdr-stat"><strong id="cnt-s">0</strong>omitidos</span>
+      <span class="hdr-stat"><strong id="cnt-p">0</strong>pendientes</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('catalogo',this)">Catálogo PDF</button>
+    <button class="tab-btn" onclick="switchTab('productos',this)">Productos</button>
+    <button class="tab-btn" onclick="switchTab('exportar',this)">Exportar</button>
+    <button class="tab-btn" onclick="switchTab('shopify',this)">Shopify</button>
+    <button class="tab-btn" onclick="switchTab('config',this)">Configuración</button>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog-section" style="padding-top:16px">
+    <div class="prog-meta">
+      <span>Progreso de revisión</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- TAB: CATÁLOGO PDF -->
+  <div class="tab-content active" id="tab-catalogo">
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Reemplazar catálogo PDF</div>
+          <div class="section-desc">Sube el nuevo PDF y se publica automáticamente en catalogo.aranti.mx</div>
+        </div>
+        <span id="pdf-status" class="badge badge-amber"><span class="badge-dot"></span>Sin configurar</span>
+      </div>
+      <div class="section-body">
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('pdf-file-input').click()" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="this.classList.remove('dragover')">
+          <div class="upload-icon">📄</div>
+          <div class="upload-title" id="upload-title">Arrastra el PDF aquí o haz clic para seleccionar</div>
+          <div class="upload-sub">El archivo debe llamarse catalogo.pdf · Máximo 25MB</div>
+        </div>
+        <input type="file" id="pdf-file-input" accept=".pdf" onchange="onFileSelect(this.files[0])">
+        <div class="progress-wrap" id="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="progress-label" id="progress-label">Subiendo...</div>
+        </div>
+        <div class="alert alert-success" id="upload-success">✓ PDF subido correctamente. Cloudflare Pages desplegará los cambios en ~30 segundos.</div>
+        <div class="alert alert-error" id="upload-error"></div>
+        <div class="alert alert-info" id="upload-info">Configura el GitHub Token en la pestaña Configuración para habilitar esta función.</div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-copper" id="btn-upload" onclick="uploadPDF()" disabled>Publicar en catalogo.aranti.mx</button>
+          <a class="btn btn-outline" href="https://catalogo.aranti.mx" target="_blank">Ver catálogo →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PRODUCTOS -->
+  <div class="tab-content" id="tab-productos">
+    <div style="padding:20px 28px 0">
+      <div class="cat-tabs" id="cat-tabs"></div>
+      <div class="prod-toolbar">
+        <input class="search-input" id="search" placeholder="Buscar producto..." oninput="renderProducts()">
+        <button class="filter-btn active" data-f="all" onclick="setFilter(this)">Todos</button>
+        <button class="filter-btn" data-f="pending" onclick="setFilter(this)">Pendientes</button>
+        <button class="filter-btn" data-f="approved" onclick="setFilter(this)">Aprobados</button>
+        <button class="filter-btn" data-f="skipped" onclick="setFilter(this)">Omitidos</button>
+        <button class="filter-btn" data-f="nosku" onclick="setFilter(this)">Sin SKU</button>
+      </div>
+      <div class="prod-list" id="prod-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB: EXPORTAR -->
+  <div class="tab-content" id="tab-exportar">
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">CSV para Google Sheets</div>
+          <div class="section-desc">Exporta los productos aprobados para actualizar la base de datos BD_Claude.xlsx</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.7">Descarga el CSV y pégalo en la hoja <strong>Base</strong> de tu Google Sheets. Incluye: Descripcion, Articulo (SKU), Familia, Fabricante, Pagina, Catalogo, Multiplo, Precio Venta.</p>
+        <button class="btn btn-primary" onclick="exportSheets()">Descargar CSV para Sheets</button>
+        <div class="alert alert-info" id="export-info" style="display:block;margin-top:12px">
+          <span id="export-count">0</span> productos aprobados listos para exportar.
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">CSV para Shopify (importación manual)</div>
+          <div class="section-desc">Importa productos directamente desde el panel de Shopify</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.7">Descarga el CSV y súbelo en <strong>Shopify Admin → Products → Import</strong>. Formato compatible con la plantilla de importación de Shopify.</p>
+        <button class="btn btn-outline" onclick="exportShopifyCSV()">Descargar CSV para Shopify</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SHOPIFY -->
+  <div class="tab-content" id="tab-shopify">
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Sincronización directa con Shopify</div>
+          <div class="section-desc">Crea o actualiza productos aprobados directamente vía API</div>
+        </div>
+        <span id="shopify-status" class="badge badge-amber"><span class="badge-dot"></span>Sin configurar</span>
+      </div>
+      <div class="section-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7">
+          Sincroniza todos los productos aprobados directamente con tu tienda Shopify. Los productos nuevos se crean y los existentes se actualizan con el precio y SKU del catálogo.
+        </p>
+        <div style="background:var(--cream);border-radius:2px;padding:16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.8;letter-spacing:.03em">
+          <strong style="color:var(--text);display:block;margin-bottom:6px">Qué hace esta sincronización:</strong>
+          ✓ Crea productos nuevos que no existen en Shopify<br>
+          ✓ Actualiza precio de productos existentes (busca por SKU)<br>
+          ✓ Asigna colección según sección del catálogo<br>
+          ✗ No elimina productos existentes
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-primary" id="btn-sync" onclick="syncShopify()" disabled>Sincronizar con Shopify</button>
+          <span id="sync-count" style="font-size:12px;color:var(--muted)"></span>
+        </div>
+        <div class="alert alert-info" id="shopify-info" style="margin-top:12px">Configura las credenciales de Shopify en la pestaña Configuración.</div>
+        <div class="alert alert-success" id="shopify-success"></div>
+        <div class="alert alert-error" id="shopify-error"></div>
+        <div class="shopify-results" id="shopify-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: CONFIGURACIÓN -->
+  <div class="tab-content" id="tab-config">
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">GitHub — Subir PDF</div>
+          <div class="section-desc">Necesario para publicar el catálogo PDF desde el admin</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">GitHub Personal Access Token</label>
+          <input type="password" class="form-input" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="saveConfig()">
+          <div class="form-hint">Settings → Developer settings → Personal access tokens → Tokens (classic). Permisos: repo</div>
+        </div>
+        <div class="alert alert-success" id="gh-saved" style="display:none">✓ Token guardado en este navegador</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Shopify — Sincronización API</div>
+          <div class="section-desc">Necesario para sincronizar productos directamente con tu tienda</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre de la tienda</label>
+            <input type="text" class="form-input" id="shopify-store" placeholder="aranti" oninput="saveConfig()">
+            <div class="form-hint">La parte antes de .myshopify.com</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Admin API Access Token</label>
+            <input type="password" class="form-input" id="shopify-token" placeholder="shpat_xxxxxxxxxxxxxxxxxxxx" oninput="saveConfig()">
+            <div class="form-hint">Shopify Admin → Settings → Apps → Develop apps</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="testShopify()">Probar conexión</button>
+        <div class="alert alert-success" id="shopify-test-ok" style="display:none">✓ Conexión con Shopify exitosa</div>
+        <div class="alert alert-error" id="shopify-test-err" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Temporada</div>
+          <div class="section-desc">Al cambiar de temporada se resetea el progreso de revisión</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">Nombre del catálogo actual</label>
+          <input type="text" class="form-input" id="season-name" placeholder="PRIMAVERA26" oninput="saveConfig()" style="max-width:240px">
+        </div>
+        <button class="btn btn-outline btn-sm" style="border-color:var(--red);color:var(--red)" onclick="resetSeason()">Resetear progreso para nueva temporada</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PASS = 'aranti2026';
+const GH_OWNER = 'arantimx';
+const GH_REPO = 'aranti-catalogo';
+const STORAGE_KEY = 'aranti-admin-v1';
+
+let activeCat = 'Cristalería';
+let activeFilter = 'all';
+let decisions = {};
+let config = {};
+let selectedFile = null;
+
+const CATS = ['Cristalería','Vajillas','Exterior','Revol','Cubiertos','Complementos'];
+
+const SKU_DB = {
+  'BROADWAY HIGHBALL 12 OZ':'ARC-L7255','BROADWAY OLD FASHION 10 OZ':'ARC-P4184',
+  'AIR OLD FASHION 15 OZ':'BAG-TU22001','AIR OLD FASHION 11 OZ':'BAG-DF22001',
+  'LUNA HIGHBALL 15 OZ':'99-191210','LUNA HIGHBALL 11 OZ':'99-191190','LUNA OLD FASHION 11 OZ':'99-191200','LUNA OLD FASHION 9 OZ':'99-191180',
+  'BODEGA GRANDE 17 OZ':'99-710880','BODEGA MEDIANO 12 OZ':'99-710875','BODEGA CHICO 7 OZ':'99-710865',
+  'ISLANDE HIGHBALL 12 OZ':'ARC-N7677','ISLANDE OLD FASHION 10 OZ':'ARC-J4239','ISLANDE TEQUILERO 2 OZ':'ARC-40375',
+  'VASO LUCKY 16 OZ':'ARC-V3331',
+  'EXCLUSIVA HIGHBALL 17 OZ':'99-349791','EXCLUSIVA OLD FASHION 12 OZ':'99-349792','EXCLUSIVA OLD FASHION 7 OZ':'99-349793',
+  'ECHO VASO 15 OZ':'VC-0244',
+  'WEINLAND HIGHBALL 14 OZ':'SL-10012','WEINLAND OLD FASHION 12 OZ':'SL-10016','WEINLAND TEQUILERO 3 OZ':'SL-10020',
+  'ARCHITECTE HIGHBALL 12 OZ':'ARC-L6586','ARCHITECTE OLD FASHION 10 OZ':'ARC-L6695','ARCHITECTE TEQUILERO 2 OZ':'ARC-L6584',
+  'DIAMANTE HIGHBALL 16 OZ':'98-A12770','DIAMANTE OLD FASHION 12 OZ':'98-A12769',
+  'OPTICA HIGHBALL 19 OZ':'98-A13143','OPTICA OLD FASHION 15 OZ':'98-A13191',
+  'LUCENT OLD FASHION 10 OZ AZUL':'LR-633848','LUCENT OLD FASHION 10 OZ TRANSPARENTE':'LR-633801','LUCENT OLD FASHION 10 OZ VERDE':'LR-633897',
+  'PRIMARY NEGRO 12 OZ':'ARC-L9406','PRIMARY BLANCO 12 OZ':'ARC-L9407',
+  'GARRAFA LIVIA 1.3 LT':'PE-DG1048','GARRAFA YPSILON GRANDE 1 LT':'99-125001','GARRAFA YPSILON MEDIANA 500 ML':'99-125081','GARRAFA YPSILON CHICA 250 ML':'99-125071',
+  'BOTELLA OFFICINA 1 LT':'99-540621','BOTELLA FIORELLA 1 LT':'PE-GZ1008-1','JARRA TIVOLI 2.3 LT':'ARC-28438',
+  'DOBLE PARED CHICO 6 OZ':'UN-0913','DOBLE PARED GRANDE 10 OZ':'UN-0912',
+  'TAZA DP MOKA 3 OZ':'UN-BG11091S','TAZA DP AMERICANO 14 OZ':'UN-BG14500',
+  'KYOTO HIGHBALL 15 OZ':'SL-3460012','KYOTO HIGHBALL 13 OZ':'SL-3460009','KYOTO OLD FASHION 14 OZ':'SL-3460015','KYOTO OLD FASHION 10 OZ':'SL-3460014','KYOTO COPA COCKTAIL 10 OZ':'SL-3460025','KYOTO COPA COCKTAIL 6 OZ':'SL-3460005',
+  'POWER VINO TINTO 17 OZ':'SL-1590001','POWER VINO BLANCO 13 OZ':'SL-1590002','POWER COCKTAIL 9 OZ':'SL-1590008','POWER CHAMPAGNE 8 OZ':'SL-1590029','POWER VASO GRANDE 17 OZ':'SL-1590022','POWER VASO MEDIANO 12 OZ':'SL-1590012',
+  'FLORIAN VINO TINTO 18 OZ':'99-199419BCG','FLORIAN VINO BLANCO 12 OZ':'99-199418BCG','FLORIAN CHAMPAGNE 7 OZ':'99-199421BCG','FLORIAN HIGHBALL 14 OZ':'99-199422BCG','FLORIAN OLD FASHION 12 OZ':'99-199423BCG','FLORIAN MARTINI 8 OZ':'99-199420BCL',
+  'COPA GIN PREMIUM 23 OZ':'99-170012','COPA GIN OLD TOM 27 OZ':'98-A12891',
+  'ETERNITY COPA GIN 14 OZ':'UN-RW230210','ETERNITY MIXING GLASS 17 OZ':'UN-OTG230210',
+  'COPA CERVEZA MARTIGUES 11 OZ':'ARC-26002','COPA CERVEZA PILSNER 18 OZ':'98-A12461','TARRO CERVEZA BAVIERA 17 OZ':'99-133440','COPA CERVEZA IPA 18 OZ':'98-A11825','COPA CERVEZA MUG 14 OZ':'ARC-C1643','TARRO CERVEZA ISAR 17 OZ':'SL-5000052',
+  'BARTENDER MOSCOW MULE 18 OZ':'99-666233','BARTENDER JULEP 12 OZ':'99-666237','BARTENDER MOJITO 12 OZ':'99-666238','BARTENDER COCONUT 15 OZ':'99-122121','BARTENDER PINEAPPLE 15 OZ':'99-122120',
+  'COPA PÉNDULO 10 OZ':'BAG-RW20175','BLOSSOM VASO 5 OZ':'LR-616301','BIRD GLASS COPA 4 OZ':'BAG-MXG-04','SKULL SHOT 2 OZ':'BAG-BG19102',
+  'WEINLAND BURGUNDY 22 OZ':'SL-10000','WEINLAND VINO TINTO 18 OZ':'SL-10035','WEINLAND VINO BLANCO 15 OZ':'SL-10001','WEINLAND FLAUTA 7 OZ':'SL-10007',
+  'VINALIA VINO TINTO 18 OZ':'98-A13555','VINALIA VINO BLANCO 15 OZ':'98-A13557','VINALIA COGNAC 17 OZ':'98-A13361','VINALIA CHAMPAGNE 10 OZ':'98-A11898',
+  'BACKDOOR GIN 27 OZ':'98-A13785','BACKDOOR COCKTAIL 15 OZ':'98-A13795','BACKDOOR CHAMPAGNE 10 OZ':'98-A13796','BACKDOOR MARTINI 8 OZ':'98-A13791','BACKDOOR COPA COCKTAIL 10 OZ':'98-A13798','BACKDOOR NICK & NORA 5 OZ':'98-A13801',
+  'QUATROPHIL BURGUNDY 25 OZ':'SL-23100','QUATROPHIL VINO TINTO 20 OZ':'SL-23101','QUATROPHIL VINO BLANCO 15 OZ':'SL-23103','QUATROPHIL FLAUTA 10 OZ':'SL-23129','QUATROPHIL GRAPPA 2 OZ':'SL-23130',
+  'NICK & NORA BARTENDER 5 OZ':'98-A12671','DOBLE PARED CERVEZA 16 OZ':'UN-055','MOSCOW MULE TARRO 14 OZ':'PE-MBH-14CO',
+  'DECANTADOR CLASSIC 26 OZ':'SL-20059','DECANTADOR CUELLO DE CISNE 35 OZ':'BAG-CDC13050','DECANTADOR AURUM 50 OZ':'99-180860','DECANTADOR MAGNUM 100 OZ':'BAG-DC21200',
+  'METAL SHAKER PLATA 750 ML':'PE-CSB-05S','METAL SHAKER COBRE 750 ML':'PE-CSB-05C',
+  'NORDIC SET 12 PZ (4 PERSONAS)':'SET-NORD','NORDIC PLATÓN HONDO 27 CM':'RK-NODP27','NORDIC PLATÓN HONDO 21 CM':'RK-NODP21','NORDIC PLATO PAN 14 CM':'RK-NOLD14',
+  'RUSTIC BLACK SET 12 PZ (4 PERSONAS)':'SET-RUSBLA','RUSTIC BLACK PLATÓN 34X21 CM':'941-917612','RUSTIC BLACK TAZA 13 OZ (4 PZ)':'941-526424',
+  'ARTISAN COVE SET 12 PZ (4 PERSONAS)':'SET-ARTCOV','ARTISAN COVE SALSERA 4 OZ':'SN-01460H-CO','ARTISAN COVE PLATO PAN 13 CM':'SN-50540N1-CO','ARTISAN COVE TAZA 10 OZ (4 PZ)':'SN-3640IHB-CO',
+  'COSMOS PLATO 29 CM NEGRO':'941-892912','COSMOS PLATO 22 CM NEGRO':'941-892012','COSMOS BOWL COUPE 1 LT NEGRO':'941-897512','COSMOS RAMEKIN 2 OZ NEGRO':'941-897312',
+  'CRAFTED BREEZE SET 12 PZ (4 PERSONAS)':'SET-CBRVB','CRAFTED BREEZE PLATO PROFUNDO 28 OZ':'VB-19-5167-2700','CRAFTED BREEZE TAZA 12 OZ (4 PZ)':'VB-19-5167-9651',
+  'CRAFTED BLUEBERRY SET 12 PZ (4 PERSONAS)':'SET-CBVB',
+  'EASE SELVA AQUA SET 12 PZ (4 PERSONAS)':'SET-EASELAQ','EASE ENSALADERA 1.2 LT':'RK-EABW20SAQ','EASE PLATO PAN 16 CM':'RK-EACP16SAQ','EASE SALSERO 8 CM':'RK-EABR08SAQ',
+  'AFINA SET 12 PZ (4 PERSONAS)':'SET-AFVB','AFINA ENSALADERA 1.4 LT':'VB-10-4293-3180','AFINA PLATO PAN 16 CM':'VB-10-4293-2660','AFINA PLATÓN SERVIR 32 CM':'VB-10-4293-2680',
+  'MODULO NATURE JADE SET 12 PZ':'SET-MODNAT','MODULO NATURE BOWL 10 CM':'194-458','MODULO NATURE TARRO MUG 10 OZ':'194-461',
+  'EVOLUTIONS SET 24 PZ BLANCA':'SET-EVOB','EVOLUTIONS SET 24 PZ GRIS':'SET-EVOG','EVOLUTIONS SET 24 PZ NEGRA':'SET-EVON',
+  'ACCESS PLATO TRINCHE 27 CM':'RK-ASFP27A','ACCESS PLATO ENSALADA 21 CM':'RK-ASFP21A','ACCESS PLATO SOPA 23 CM':'RK-ASDP23A','ACCESS BOWL 16 CM':'RK-ASBW16','ACCESS PLATO PAN/POSTRE 15 CM':'RK-ASFP15A',
+  'BLUE RAKU SET 12 PZ (4 PERSONAS)':'SET-BLURAKU',
+  'RECKLESS SET 12 PZ (4 PERSONAS)':'SET-RECKLESS','RECKLESS BOWL SERVIR 25 CM':'ID-47002-121125','RECKLESS PLATÓN SERVIR 33X21 CM':'ID-47002-143033','RECKLESS TAZA CAFÉ 10 OZ (4 PZ)':'ID-57001-305030',
+  'ZEN 1972 SET 12 PZ (4 PERSONAS)':'SET-ZEN','GRANADA SET 12 PZ (4 PERSONAS)':'SET-GRA',
+  'CANYON SET 12 PZ (4 PERSONAS)':'SET-CANYON','CANYON BOWL SERVIR 25 CM':'ID-20169-121125','CANYON PLATO PAN 17 CM':'ID-20169-111017',
+  'POTTERY MARKET PLATO COUPE 27 CM TAUPE':'GE-CS-100-MA','POTTERY MARKET PLATO COUPE 23 CM TAUPE':'GE-CS-90-MA','POTTERY MARKET BOWL IRREGULAR 18 CM TAUPE':'GE-B-180-MA','POTTERY MARKET BOWL SERVIR 22 CM TAUPE (6 PZ)':'GE-B-420-MA','POTTERY MARKET PLATÓN SERVIR 30X19 CM TAUPE':'GE-CS-1170-MA',
+  'IMPERIAL HIGHBALL 15 OZ (6 PZ)':'PE-JBYL3029-410CL','IMPERIAL OLD FASHION 11 OZ (6 PZ)':'PE-JBYL3029-320CL',
+  'RADIANT HIGHBALL 12 OZ (6 PZ)':'PE-JBS103CL','RADIANT OLD FASHION 13 OZ (6 PZ)':'PE-JBYL3033-380CL',
+  'ROCK HIGHBALL 12 OZ (6 PZ)':'PE-JB8931CL','DIAMOND OLD FASHION 12 OZ (6 PZ)':'PE-JB9319CL',
+  'AURA BEER 14 OZ (6 PZ)':'PE-JBYL3008-430CL','BRISA OLD FASHION 13 OZ (6 PZ)':'PE-JBX1017-340CL',
+  'COPA VINO 18 OZ (6 PZ)':'PE-JBX1001-540CL','COPA VINO 16 OZ (6 PZ)':'PE-JBX1002-490CL','COPA GIN 22 OZ (6 PZ)':'PE-JBX1006-640CL','COPA FLAUTA 5 OZ (6 PZ)':'PE-JBSW0302CL','COPA COCKTAIL 22 OZ (6 PZ)':'PE-JBGJ5007-670CL',
+  'YLI WHITE JARRA 22 OZ':'RE-656390','YLI WHITE PLATO PALA 18X14 CM':'RE-656296','YLI WHITE PLATO VAINA 18X14 CM':'RE-656356','YLI WHITE PLATO COUPE 21 CM':'RE-656380','YLI WHITE BOWL MEDIANO 8 OZ':'RE-656386',
+  'YLI BLACK JARRA 22 OZ':'RE-656392','YLI BLACK PLATO PALA 18X14 CM':'RE-656392',
+  'BOWL PIZARRA 17 CM (4 PZ)':'RE-642496','BOWL PIZARRA 10 CM (4 PZ)':'RE-642035',
+  'PIZARRA 40 X 30 CM':'RE-640598','PIZARRA 30 X 20 CM':'RE-641001','PIZARRA 30 X 11 CM':'RE-640602',
+  'FROISSES VASO EXPRESSO 3 OZ BLANCO (6 PZ)':'RE-619088','FROISSES VASO EXPRESSO 3 OZ NEGRO (6 PZ)':'RE-616096','FROISSES VASO EXPRESSO 3 OZ ROJO (6 PZ)':'RE-001640',
+  'CUBIERTOS LINEAL SET 20 PZ (4 PERSONAS)':'SET-LINE','CUBIERTOS ULTRA RIM SET 20 PZ (4 PERSONAS)':'SET-ULRIM','CUBIERTOS MARTELO CHAMPAGNE SET 20 PZ':'SET-MARTCHA','CUBIERTOS PIEMONT V&B SET 20 PZ (4 PERSONAS)':'SET-PIEMVB',
+  'CUBIERTOS TRENDY BLANCO CON DORADO SET 20 PZ':'SET-TRENWH','CUBIERTOS TRENDY NEGRO CON DORADO SET 20 PZ':'TIR-CTRB','CUBIERTOS TRENDY ROSA CON DORADO SET 20 PZ':'SET-TRENPI',
+  'CUBIERTOS INFINITO SET 20 PZ (4 PERSONAS)':'SET-INF','CUBIERTOS STILETTO SET 20 PZ (4 PERSONAS)':'SET-STIL','CUBIERTOS INFINITO COPPER SET 20 PZ':'SET-INFCOP','CUBIERTOS INFINITO BLACK SET 20 PZ':'SET-INFBLA',
+  'COPA DIAMOND 12 OZ (6 PZ)':'99-302262',
+  'ACACIA BOWL 31 CM':'SN-SWO-250618-RBW49','ACACIA BOWL 19 CM':'SN-SWO-250618-RBW50','ACACIA BOWL 15 CM':'SN-SWO-271118-WBW61',
+  'BOWLS VERSATILE 4 OZ (12 PZ)':'ARC-V7216','BOWL ARIA ALFA 8 OZ (12 PZ)':'99-235683','BOWL ARIA BETA 8 OZ (12 PZ)':'99-235682','BOWL DOBLE PARED 5 OZ (6 PZ)':'UN-029',
+  'MOLCAJETE 20 CM':'ST-TORPM','TORTILLERO 20 CM':'ST-MOLPM','SET SALSERO RECTANGULAR':'ST-SALPMR','SET SALSERO CIRCULAR':'ST-SALPMC',
+  'PLATO SARTÉN HIERRO FUNDIDO 19X23 CM':'PE-SK-795-FS','SARTÉN HIERRO FUNDIDO 20 CM MEDIANO':'PE-SK-8R','SARTÉN HIERRO FUNDIDO 25 CM GRANDE':'PE-SK-10R',
+  'CANASTA DE PAN NEGRO (2 PZ)':'SET-CN','CANASTA DE PAN BEIGE (2 PZ)':'SET-CB',
+  'MANTEL MELANGE 38 CM GRAY (4 PZ)':'TS-ZZ0427-GR','MANTEL MELANGE 38 CM NATURAL (4 PZ)':'TS-ZZ0427-NT','MANTEL MELANGE 38 CM SAND (4 PZ)':'TS-ZZ0427-SD','MANTEL MELANGE 38 CM TAUPE (4 PZ)':'TS-ZZ0427-TP',
+  'MANTEL ARANTI 38 CM PLANT (6 PZ)':'TG 293-10',
+  'MANTEL CHILEWICH 36X48 CM CHALK BAMBOO (4 PZ)':'CH-100105-004','MANTEL CHILEWICH 36X48 CM LINEN MINI (4 PZ)':'CH-100132-014','MANTEL CHILEWICH 36X48 CM BLUE WAVE (4 PZ)':'CH-100437-001','MANTEL CHILEWICH 36X48 CM BLUE MOSAIC (4 PZ)':'CH-100435-001',
+  'SPEZIA FRASCO 2.2 LT (6 PZ)':'PE-23FL0414','SPEZIA FRASCO 1.1 LT (6 PZ)':'PE-23FL0322','SPEZIA FRASCO 700 ML (6 PZ)':'PE-23FL0323','SPEZIA FRASCO 450 ML (6 PZ)':'PE-23FL0324',
+};
+
+const RAW=[
+  {c:'Cristalería',col:'Broadway',n:'BROADWAY HIGHBALL 12 OZ',p:1300,q:12,pg:3},
+  {c:'Cristalería',col:'Broadway',n:'BROADWAY OLD FASHION 10 OZ',p:1100,q:12,pg:3},
+  {c:'Cristalería',col:'Broadway',n:'BROADWAY TEQUILERO 1½ OZ',p:1100,q:12,pg:3},
+  {c:'Cristalería',col:'Air',n:'AIR OLD FASHION 15 OZ',p:800,q:6,pg:4},
+  {c:'Cristalería',col:'Air',n:'AIR OLD FASHION 11 OZ',p:700,q:6,pg:4},
+  {c:'Cristalería',col:'Luna',n:'LUNA HIGHBALL 15 OZ',p:1300,q:12,pg:5},
+  {c:'Cristalería',col:'Luna',n:'LUNA HIGHBALL 11 OZ',p:1200,q:12,pg:5},
+  {c:'Cristalería',col:'Luna',n:'LUNA OLD FASHION 11 OZ',p:1100,q:12,pg:5},
+  {c:'Cristalería',col:'Luna',n:'LUNA OLD FASHION 9 OZ',p:1000,q:12,pg:5},
+  {c:'Cristalería',col:'Bodega',n:'BODEGA GRANDE 17 OZ',p:800,q:12,pg:6},
+  {c:'Cristalería',col:'Bodega',n:'BODEGA MEDIANO 12 OZ',p:700,q:12,pg:6},
+  {c:'Cristalería',col:'Bodega',n:'BODEGA CHICO 7 OZ',p:600,q:12,pg:6},
+  {c:'Cristalería',col:'Islande',n:'ISLANDE HIGHBALL 12 OZ',p:700,q:12,pg:7},
+  {c:'Cristalería',col:'Islande',n:'ISLANDE OLD FASHION 10 OZ',p:600,q:12,pg:7},
+  {c:'Cristalería',col:'Islande',n:'ISLANDE TEQUILERO 2 OZ',p:500,q:12,pg:7},
+  {c:'Cristalería',col:'Lucky',n:'VASO LUCKY 16 OZ',p:1200,q:12,pg:8},
+  {c:'Cristalería',col:'Exclusiva',n:'EXCLUSIVA HIGHBALL 17 OZ',p:1200,q:12,pg:9},
+  {c:'Cristalería',col:'Exclusiva',n:'EXCLUSIVA OLD FASHION 12 OZ',p:1100,q:12,pg:9},
+  {c:'Cristalería',col:'Exclusiva',n:'EXCLUSIVA OLD FASHION 7 OZ',p:1000,q:12,pg:9},
+  {c:'Cristalería',col:'Echo',n:'ECHO VASO 15 OZ',p:1000,q:12,pg:10},
+  {c:'Cristalería',col:'Weinland',n:'WEINLAND HIGHBALL 14 OZ',p:1000,q:6,pg:11},
+  {c:'Cristalería',col:'Weinland',n:'WEINLAND OLD FASHION 12 OZ',p:900,q:6,pg:11},
+  {c:'Cristalería',col:'Weinland',n:'WEINLAND TEQUILERO 3 OZ',p:800,q:6,pg:11},
+  {c:'Cristalería',col:'Architecte',n:'ARCHITECTE HIGHBALL 12 OZ',p:1400,q:6,pg:12},
+  {c:'Cristalería',col:'Architecte',n:'ARCHITECTE OLD FASHION 10 OZ',p:1300,q:6,pg:12},
+  {c:'Cristalería',col:'Architecte',n:'ARCHITECTE TEQUILERO 2 OZ',p:600,q:6,pg:12},
+  {c:'Cristalería',col:'Kyoto',n:'KYOTO HIGHBALL 15 OZ',p:900,q:6,pg:31},
+  {c:'Cristalería',col:'Kyoto',n:'KYOTO HIGHBALL 13 OZ',p:900,q:6,pg:31},
+  {c:'Cristalería',col:'Kyoto',n:'KYOTO OLD FASHION 14 OZ',p:800,q:6,pg:31},
+  {c:'Cristalería',col:'Kyoto',n:'KYOTO OLD FASHION 10 OZ',p:800,q:6,pg:31},
+  {c:'Cristalería',col:'Kyoto',n:'KYOTO COPA COCKTAIL 10 OZ',p:1600,q:6,pg:31},
+  {c:'Cristalería',col:'Kyoto',n:'KYOTO COPA COCKTAIL 6 OZ',p:1500,q:6,pg:31},
+  {c:'Cristalería',col:'Power',n:'POWER VINO TINTO 17 OZ',p:1800,q:6,pg:33},
+  {c:'Cristalería',col:'Power',n:'POWER VINO BLANCO 13 OZ',p:1800,q:6,pg:33},
+  {c:'Cristalería',col:'Power',n:'POWER COCKTAIL 9 OZ',p:1700,q:6,pg:33},
+  {c:'Cristalería',col:'Power',n:'POWER CHAMPAGNE 8 OZ',p:1700,q:6,pg:33},
+  {c:'Cristalería',col:'Power',n:'POWER VASO GRANDE 17 OZ',p:1200,q:6,pg:33},
+  {c:'Cristalería',col:'Power',n:'POWER VASO MEDIANO 12 OZ',p:1100,q:6,pg:33},
+  {c:'Cristalería',col:'Florian',n:'FLORIAN VINO TINTO 18 OZ',p:1300,q:6,pg:34},
+  {c:'Cristalería',col:'Florian',n:'FLORIAN VINO BLANCO 12 OZ',p:1200,q:6,pg:34},
+  {c:'Cristalería',col:'Florian',n:'FLORIAN CHAMPAGNE 7 OZ',p:1000,q:6,pg:34},
+  {c:'Cristalería',col:'Florian',n:'FLORIAN HIGHBALL 14 OZ',p:900,q:6,pg:34},
+  {c:'Cristalería',col:'Florian',n:'FLORIAN OLD FASHION 12 OZ',p:900,q:6,pg:34},
+  {c:'Cristalería',col:'Florian',n:'FLORIAN MARTINI 8 OZ',p:1000,q:6,pg:34},
+  {c:'Cristalería',col:'Copas Gin',n:'COPA GIN PREMIUM 23 OZ',p:1100,q:6,pg:35},
+  {c:'Cristalería',col:'Copas Gin',n:'COPA GIN OLD TOM 27 OZ',p:2500,q:6,pg:35},
+  {c:'Cristalería',col:'Eternity',n:'ETERNITY COPA GIN 14 OZ',p:900,q:6,pg:36},
+  {c:'Cristalería',col:'Eternity',n:'ETERNITY MIXING GLASS 17 OZ',p:300,q:1,pg:36},
+  {c:'Cristalería',col:'Copas Cerveza',n:'COPA CERVEZA MARTIGUES 11 OZ',p:600,q:6,pg:37},
+  {c:'Cristalería',col:'Copas Cerveza',n:'COPA CERVEZA PILSNER 18 OZ',p:1800,q:6,pg:37},
+  {c:'Cristalería',col:'Copas Cerveza',n:'TARRO CERVEZA BAVIERA 17 OZ',p:1200,q:6,pg:37},
+  {c:'Cristalería',col:'Copas Cerveza',n:'COPA CERVEZA IPA 18 OZ',p:1900,q:6,pg:37},
+  {c:'Cristalería',col:'Copas Cerveza',n:'COPA CERVEZA MUG 14 OZ',p:700,q:6,pg:37},
+  {c:'Cristalería',col:'Copas Cerveza',n:'TARRO CERVEZA ISAR 17 OZ',p:1300,q:6,pg:37},
+  {c:'Cristalería',col:'Bartender',n:'BARTENDER MOSCOW MULE 18 OZ',p:800,q:6,pg:39},
+  {c:'Cristalería',col:'Bartender',n:'BARTENDER JULEP 12 OZ',p:600,q:6,pg:39},
+  {c:'Cristalería',col:'Bartender',n:'BARTENDER MOJITO 12 OZ',p:600,q:6,pg:39},
+  {c:'Cristalería',col:'Bartender',n:'BARTENDER COCONUT 15 OZ',p:700,q:6,pg:39},
+  {c:'Cristalería',col:'Bartender',n:'BARTENDER PINEAPPLE 15 OZ',p:700,q:6,pg:39},
+  {c:'Cristalería',col:'Decantadores',n:'DECANTADOR CLASSIC 26 OZ',p:1500,q:1,pg:52},
+  {c:'Cristalería',col:'Decantadores',n:'DECANTADOR CUELLO DE CISNE 35 OZ',p:1300,q:1,pg:52},
+  {c:'Cristalería',col:'Decantadores',n:'DECANTADOR AURUM 50 OZ',p:1800,q:1,pg:52},
+  {c:'Cristalería',col:'Decantadores',n:'DECANTADOR MAGNUM 100 OZ',p:1400,q:1,pg:52},
+  {c:'Cristalería',col:'Shakers',n:'METAL SHAKER PLATA 750 ML',p:700,q:1,pg:53},
+  {c:'Cristalería',col:'Shakers',n:'METAL SHAKER COBRE 750 ML',p:700,q:1,pg:53},
+  {c:'Vajillas',col:'Nordic',n:'NORDIC SET 12 PZ (4 PERSONAS)',p:2800,q:4,pg:55,b:1},
+  {c:'Vajillas',col:'Nordic',n:'NORDIC PLATÓN HONDO 27 CM',p:380,q:1,pg:55},
+  {c:'Vajillas',col:'Rustic Black',n:'RUSTIC BLACK SET 12 PZ (4 PERSONAS)',p:4800,q:4,pg:56,b:1},
+  {c:'Vajillas',col:'Rustic Black',n:'RUSTIC BLACK PLATÓN 34X21 CM',p:800,q:1,pg:56},
+  {c:'Vajillas',col:'Rustic Black',n:'RUSTIC BLACK TAZA 13 OZ (4 PZ)',p:800,q:4,pg:56},
+  {c:'Vajillas',col:'Artisan Cove',n:'ARTISAN COVE SET 12 PZ (4 PERSONAS)',p:3200,q:4,pg:57,b:1},
+  {c:'Vajillas',col:'Artisan Cove',n:'ARTISAN COVE SALSERA 4 OZ',p:250,q:1,pg:57},
+  {c:'Vajillas',col:'Artisan Cove',n:'ARTISAN COVE PLATO PAN 13 CM',p:200,q:1,pg:57},
+  {c:'Vajillas',col:'Artisan Cove',n:'ARTISAN COVE TAZA 10 OZ (4 PZ)',p:700,q:4,pg:57},
+  {c:'Vajillas',col:'Cosmos',n:'COSMOS PLATO 29 CM NEGRO',p:440,q:1,pg:58},
+  {c:'Vajillas',col:'Cosmos',n:'COSMOS PLATO 22 CM NEGRO',p:260,q:1,pg:58},
+  {c:'Vajillas',col:'Cosmos',n:'COSMOS BOWL COUPE 1 LT NEGRO',p:440,q:1,pg:58},
+  {c:'Vajillas',col:'Crafted Breeze',n:'CRAFTED BREEZE SET 12 PZ (4 PERSONAS)',p:6200,q:4,pg:59,b:1},
+  {c:'Vajillas',col:'Crafted Breeze',n:'CRAFTED BREEZE PLATO PROFUNDO 28 OZ',p:700,q:1,pg:59},
+  {c:'Vajillas',col:'Crafted Blueberry',n:'CRAFTED BLUEBERRY SET 12 PZ (4 PERSONAS)',p:6200,q:4,pg:60,b:1},
+  {c:'Vajillas',col:'Ease Selva Aqua',n:'EASE SELVA AQUA SET 12 PZ (4 PERSONAS)',p:4200,q:4,pg:61,b:1},
+  {c:'Vajillas',col:'Ease Selva Aqua',n:'EASE ENSALADERA 1.2 LT',p:300,q:1,pg:61},
+  {c:'Vajillas',col:'Afina',n:'AFINA SET 12 PZ (4 PERSONAS)',p:7000,q:4,pg:62,b:1},
+  {c:'Vajillas',col:'Afina',n:'AFINA ENSALADERA 1.4 LT',p:800,q:1,pg:62},
+  {c:'Vajillas',col:'Modulo Nature',n:'MODULO NATURE JADE SET 12 PZ',p:6200,q:4,pg:63,b:1},
+  {c:'Vajillas',col:'Evolutions',n:'EVOLUTIONS SET 24 PZ BLANCA',p:1800,q:6,pg:64,b:1},
+  {c:'Vajillas',col:'Evolutions',n:'EVOLUTIONS SET 24 PZ GRIS',p:1800,q:6,pg:64,b:1},
+  {c:'Vajillas',col:'Evolutions',n:'EVOLUTIONS SET 24 PZ NEGRA',p:1800,q:6,pg:64,b:1},
+  {c:'Vajillas',col:'Access',n:'ACCESS PLATO TRINCHE 27 CM',p:160,q:1,pg:65},
+  {c:'Vajillas',col:'Access',n:'ACCESS PLATO ENSALADA 21 CM',p:110,q:1,pg:65},
+  {c:'Vajillas',col:'Access',n:'ACCESS PLATO SOPA 23 CM',p:140,q:1,pg:65},
+  {c:'Vajillas',col:'Access',n:'ACCESS BOWL 16 CM',p:170,q:1,pg:65},
+  {c:'Vajillas',col:'Access',n:'ACCESS PLATO PAN/POSTRE 15 CM',p:80,q:1,pg:65},
+  {c:'Vajillas',col:'Blue Raku',n:'BLUE RAKU SET 12 PZ (4 PERSONAS)',p:7200,q:4,pg:66,b:1},
+  {c:'Vajillas',col:'Reckless',n:'RECKLESS SET 12 PZ (4 PERSONAS)',p:5200,q:4,pg:67,b:1},
+  {c:'Vajillas',col:'Reckless',n:'RECKLESS BOWL SERVIR 25 CM',p:700,q:1,pg:67},
+  {c:'Vajillas',col:'Reckless',n:'RECKLESS PLATÓN SERVIR 33X21 CM',p:900,q:1,pg:67},
+  {c:'Vajillas',col:'Zen 1972',n:'ZEN 1972 SET 12 PZ (4 PERSONAS)',p:2800,q:4,pg:68,b:1},
+  {c:'Vajillas',col:'Granada',n:'GRANADA SET 12 PZ (4 PERSONAS)',p:2800,q:4,pg:69,b:1},
+  {c:'Vajillas',col:'Canyon',n:'CANYON SET 12 PZ (4 PERSONAS)',p:3800,q:4,pg:70,b:1},
+  {c:'Vajillas',col:'Canyon',n:'CANYON BOWL SERVIR 25 CM',p:600,q:1,pg:70},
+  {c:'Exterior',col:'Blanc Riviera',n:'BLANC RIVIERA PLATO TRINCHE 27 CM',p:320,q:1,pg:81},
+  {c:'Exterior',col:'Blanc Riviera',n:'BLANC RIVIERA PLATO ENSALADA 21 CM',p:280,q:1,pg:81},
+  {c:'Exterior',col:'Black Riviera',n:'BLACK RIVIERA PLATO TRINCHE 27 CM',p:320,q:1,pg:82},
+  {c:'Exterior',col:'Pottery Market',n:'POTTERY MARKET PLATO COUPE 27 CM TAUPE',p:600,q:1,pg:83},
+  {c:'Exterior',col:'Pottery Market',n:'POTTERY MARKET PLATO COUPE 23 CM TAUPE',p:500,q:1,pg:83},
+  {c:'Exterior',col:'Pottery Market',n:'POTTERY MARKET BOWL IRREGULAR 18 CM TAUPE',p:400,q:1,pg:83},
+  {c:'Exterior',col:'Halo White',n:'HALO WHITE PLATO TRINCHE 27 CM',p:600,q:1,pg:84},
+  {c:'Exterior',col:'Halo White',n:'HALO WHITE PLATO ENSALADA 21 CM',p:400,q:1,pg:84},
+  {c:'Exterior',col:'Halo Black',n:'HALO BLACK PLATO TRINCHE 27 CM',p:600,q:1,pg:85},
+  {c:'Exterior',col:'Halo Black',n:'HALO BLACK PLATO ENSALADA 21 CM',p:400,q:1,pg:85},
+  {c:'Exterior',col:'Vasos Policarb.',n:'IMPERIAL HIGHBALL 15 OZ (6 PZ)',p:2100,q:6,pg:87},
+  {c:'Exterior',col:'Vasos Policarb.',n:'IMPERIAL OLD FASHION 11 OZ (6 PZ)',p:1700,q:6,pg:87},
+  {c:'Exterior',col:'Vasos Policarb.',n:'RADIANT HIGHBALL 12 OZ (6 PZ)',p:2100,q:6,pg:87},
+  {c:'Exterior',col:'Copas Policarb.',n:'COPA VINO 18 OZ (6 PZ)',p:1700,q:6,pg:88},
+  {c:'Exterior',col:'Copas Policarb.',n:'COPA GIN 22 OZ (6 PZ)',p:1700,q:6,pg:88},
+  {c:'Revol',col:'YLI White',n:'YLI WHITE JARRA 22 OZ',p:1950,q:1,pg:90},
+  {c:'Revol',col:'YLI White',n:'YLI WHITE PLATO PALA 18X14 CM',p:1100,q:1,pg:90},
+  {c:'Revol',col:'YLI White',n:'YLI WHITE PLATO COUPE 21 CM',p:1000,q:1,pg:90},
+  {c:'Revol',col:'YLI Black',n:'YLI BLACK JARRA 22 OZ',p:1950,q:1,pg:91},
+  {c:'Revol',col:'Bowls Pizarra',n:'BOWL PIZARRA 17 CM (4 PZ)',p:2800,q:4,pg:92},
+  {c:'Revol',col:'Bowls Pizarra',n:'BOWL PIZARRA 10 CM (4 PZ)',p:1800,q:4,pg:92},
+  {c:'Revol',col:'Cheese Board',n:'PIZARRA 40 X 30 CM',p:2200,q:1,pg:93},
+  {c:'Revol',col:'Cheese Board',n:'PIZARRA 30 X 20 CM',p:1200,q:1,pg:93},
+  {c:'Revol',col:'Froisses',n:'FROISSES VASO EXPRESSO 3 OZ BLANCO (6 PZ)',p:3000,q:6,pg:96},
+  {c:'Revol',col:'Froisses',n:'FROISSES VASO EXPRESSO 3 OZ ROJO (6 PZ)',p:3000,q:6,pg:96},
+  {c:'Revol',col:'Froisses',n:'FROISSES VASO EXPRESSO 3 OZ NEGRO (6 PZ)',p:3000,q:6,pg:96},
+  {c:'Cubiertos',col:'Orphebre',n:'CUBIERTOS ORPHEBRE SET 20 PZ (4 PERSONAS)',p:2800,q:20,pg:98,b:1},
+  {c:'Cubiertos',col:'Lineal',n:'CUBIERTOS LINEAL SET 20 PZ (4 PERSONAS)',p:1600,q:20,pg:99,b:1},
+  {c:'Cubiertos',col:'Ultra Rim',n:'CUBIERTOS ULTRA RIM SET 20 PZ (4 PERSONAS)',p:1800,q:20,pg:100,b:1},
+  {c:'Cubiertos',col:'Martelo',n:'CUBIERTOS MARTELO CHAMPAGNE SET 20 PZ',p:3200,q:20,pg:101,b:1},
+  {c:'Cubiertos',col:'Piemont',n:'CUBIERTOS PIEMONT V&B SET 20 PZ (4 PERSONAS)',p:7200,q:20,pg:102,b:1},
+  {c:'Cubiertos',col:'Trendy',n:'CUBIERTOS TRENDY BLANCO CON DORADO SET 20 PZ',p:2200,q:20,pg:103,b:1},
+  {c:'Cubiertos',col:'Trendy',n:'CUBIERTOS TRENDY NEGRO CON DORADO SET 20 PZ',p:2200,q:20,pg:103,b:1},
+  {c:'Cubiertos',col:'Trendy',n:'CUBIERTOS TRENDY ROSA CON DORADO SET 20 PZ',p:2200,q:20,pg:103,b:1},
+  {c:'Cubiertos',col:'Infinito',n:'CUBIERTOS INFINITO SET 20 PZ (4 PERSONAS)',p:2200,q:20,pg:104,b:1},
+  {c:'Cubiertos',col:'Stiletto',n:'CUBIERTOS STILETTO SET 20 PZ (4 PERSONAS)',p:4200,q:20,pg:105,b:1},
+  {c:'Cubiertos',col:'Infinito Copper',n:'CUBIERTOS INFINITO COPPER SET 20 PZ',p:5500,q:20,pg:106,b:1},
+  {c:'Cubiertos',col:'Infinito Black',n:'CUBIERTOS INFINITO BLACK SET 20 PZ',p:5500,q:20,pg:107,b:1},
+  {c:'Complementos',col:'Salseros',n:'SALSEROS ARTISAN SET 3 BLANCO',p:1000,q:3,pg:109},
+  {c:'Complementos',col:'Salseros',n:'SALSEROS ARTISAN SET 3 NEGRO',p:1000,q:3,pg:109},
+  {c:'Complementos',col:'Copa Diamond',n:'COPA DIAMOND 12 OZ (6 PZ)',p:900,q:6,pg:110},
+  {c:'Complementos',col:'Acacia',n:'ACACIA BOWL 31 CM',p:2400,q:1,pg:111},
+  {c:'Complementos',col:'Acacia',n:'ACACIA BOWL 19 CM',p:1200,q:1,pg:111},
+  {c:'Complementos',col:'Acacia',n:'ACACIA BOWL 15 CM',p:600,q:1,pg:111},
+  {c:'Complementos',col:'Bowls',n:'BOWLS VERSATILE 4 OZ (12 PZ)',p:1100,q:12,pg:112},
+  {c:'Complementos',col:'Bowls',n:'BOWL ARIA ALFA 8 OZ (12 PZ)',p:1000,q:12,pg:112},
+  {c:'Complementos',col:'Bowls',n:'BOWL ARIA BETA 8 OZ (12 PZ)',p:1000,q:12,pg:112},
+  {c:'Complementos',col:'Sartén',n:'PLATO SARTÉN HIERRO FUNDIDO 19X23 CM',p:600,q:1,pg:114},
+  {c:'Complementos',col:'Sartén',n:'SARTÉN HIERRO FUNDIDO 20 CM MEDIANO',p:400,q:1,pg:114},
+  {c:'Complementos',col:'Sartén',n:'SARTÉN HIERRO FUNDIDO 25 CM GRANDE',p:600,q:1,pg:114},
+  {c:'Complementos',col:'Canastas',n:'CANASTA DE PAN NEGRO (2 PZ)',p:400,q:2,pg:115},
+  {c:'Complementos',col:'Canastas',n:'CANASTA DE PAN BEIGE (2 PZ)',p:400,q:2,pg:115},
+  {c:'Complementos',col:'Manteles',n:'MANTEL MELANGE 38 CM GRAY (4 PZ)',p:600,q:4,pg:116},
+  {c:'Complementos',col:'Manteles',n:'MANTEL MELANGE 38 CM NATURAL (4 PZ)',p:600,q:4,pg:116},
+  {c:'Complementos',col:'Manteles',n:'MANTEL ARANTI 38 CM PLANT (6 PZ)',p:600,q:6,pg:117},
+  {c:'Complementos',col:'Manteles',n:'MANTEL CHILEWICH 36X48 CM CHALK BAMBOO (4 PZ)',p:1500,q:4,pg:118},
+  {c:'Complementos',col:'Manteles',n:'MANTEL CHILEWICH 36X48 CM LINEN MINI (4 PZ)',p:1500,q:4,pg:118},
+  {c:'Complementos',col:'Spezia',n:'SPEZIA FRASCO 2.2 LT (6 PZ)',p:3200,q:6,pg:120},
+  {c:'Complementos',col:'Spezia',n:'SPEZIA FRASCO 1.1 LT (6 PZ)',p:1600,q:6,pg:120},
+  {c:'Complementos',col:'Spezia',n:'SPEZIA FRASCO 700 ML (6 PZ)',p:1500,q:6,pg:120},
+  {c:'Complementos',col:'Spezia',n:'SPEZIA FRASCO 450 ML (6 PZ)',p:1400,q:6,pg:120},
+];
+
+const CATALOG=RAW.map((r,i)=>({...r,sku:SKU_DB[r.n]||'',_i:i}));
+
+// ─── INIT ───────────────────────────────────────────────
+function doLogin(){
+  const v=document.getElementById('pwd-input').value;
+  if(v===PASS){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    loadAll();
+  } else {
+    const e=document.getElementById('login-err');
+    e.style.display='block';
+    document.getElementById('pwd-input').value='';
+  }
+}
+document.getElementById('pwd-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+function loadAll(){
+  loadLocal();
+  loadConfig();
+  renderCatTabs();
+  renderProducts();
+  updateStats();
+  checkConfig();
+}
+
+function loadLocal(){
+  try{const d=localStorage.getItem(STORAGE_KEY);if(d)decisions=JSON.parse(d);}catch(e){}
+}
+function saveLocal(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(decisions));}catch(e){}
+}
+function loadConfig(){
+  try{const d=localStorage.getItem('aranti-config');if(d)config=JSON.parse(d);}catch(e){}
+  if(config.ghToken)document.getElementById('gh-token').value=config.ghToken;
+  if(config.shopifyStore)document.getElementById('shopify-store').value=config.shopifyStore;
+  if(config.shopifyToken)document.getElementById('shopify-token').value=config.shopifyToken;
+  if(config.seasonName)document.getElementById('season-name').value=config.seasonName;
+}
+function saveConfig(){
+  config.ghToken=document.getElementById('gh-token').value.trim();
+  config.shopifyStore=document.getElementById('shopify-store').value.trim();
+  config.shopifyToken=document.getElementById('shopify-token').value.trim();
+  config.seasonName=document.getElementById('season-name').value.trim();
+  try{localStorage.setItem('aranti-config',JSON.stringify(config));}catch(e){}
+  checkConfig();
+}
+function checkConfig(){
+  const hasGH=!!config.ghToken;
+  const hasSH=!!(config.shopifyStore&&config.shopifyToken);
+  document.getElementById('btn-upload').disabled=!hasGH||!selectedFile;
+  document.getElementById('btn-sync').disabled=!hasSH;
+  document.getElementById('pdf-status').innerHTML=hasGH?'<span class="badge-dot"></span>Listo':'<span class="badge-dot"></span>Sin configurar';
+  document.getElementById('pdf-status').className='badge '+(hasGH?'badge-green':'badge-amber');
+  document.getElementById('shopify-status').innerHTML=hasSH?'<span class="badge-dot"></span>Conectado':'<span class="badge-dot"></span>Sin configurar';
+  document.getElementById('shopify-status').className='badge '+(hasSH?'badge-green':'badge-amber');
+  const infoEl=document.getElementById('upload-info');
+  if(infoEl)infoEl.style.display=hasGH?'none':'block';
+  const shInfoEl=document.getElementById('shopify-info');
+  if(shInfoEl)shInfoEl.style.display=hasSH?'none':'block';
+  const appr=Object.values(decisions).filter(d=>d.a==='approved').length;
+  const sc=document.getElementById('sync-count');
+  if(sc)sc.textContent=appr+' productos aprobados listos para sincronizar';
+  const ec=document.getElementById('export-count');
+  if(ec)ec.textContent=appr;
+}
+
+// ─── TABS ────────────────────────────────────────────────
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── CAT TABS ────────────────────────────────────────────
+function renderCatTabs(){
+  const tabs=document.getElementById('cat-tabs');
+  tabs.innerHTML=CATS.map(c=>{
+    const total=CATALOG.filter(p=>p.c===c).length;
+    const done=CATALOG.filter(p=>p.c===c&&decisions[p._i]?.a).length;
+    return `<button class="cat-tab ${c===activeCat?'active':''}" onclick="selectCat('${c}',this)">${c} <span style="opacity:.5">${done}/${total}</span></button>`;
+  }).join('');
+}
+
+function selectCat(cat,btn){
+  activeCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+// ─── PRODUCTS ────────────────────────────────────────────
+function getsku(p){
+  const d=decisions[p._i];
+  if(d&&d.sku!==undefined)return d.sku;
+  return p.sku||'';
+}
+
+function renderProducts(){
+  const list=document.getElementById('prod-list');
+  const q=(document.getElementById('search')||{}).value||'';
+  let prods=CATALOG.filter(p=>p.c===activeCat);
+  if(q)prods=prods.filter(p=>p.n.toLowerCase().includes(q.toLowerCase())||p.col.toLowerCase().includes(q.toLowerCase()));
+  if(activeFilter==='pending')prods=prods.filter(p=>!decisions[p._i]?.a);
+  if(activeFilter==='approved')prods=prods.filter(p=>decisions[p._i]?.a==='approved');
+  if(activeFilter==='skipped')prods=prods.filter(p=>decisions[p._i]?.a==='skipped');
+  if(activeFilter==='nosku')prods=prods.filter(p=>!getsku(p));
+  list.innerHTML=prods.length?prods.map(p=>cardHtml(p)).join(''):'<div class="empty-state">Sin resultados</div>';
+}
+
+function cardHtml(p){
+  const dec=decisions[p._i];
+  const sku=getsku(p);
+  const unit=p.q>1?` · $${Math.round(p.p/p.q).toLocaleString('es-MX')}/pz`:'';
+  return `<div class="prod-card ${dec?.a||''}" id="card-${p._i}">
+    <div class="prod-grid">
+      <div class="prod-cell">
+        <div class="prod-name">${p.n}</div>
+        <div class="prod-col">${p.col} · pág. ${p.pg}</div>
+        <div class="prod-tags">
+          ${!p.sku?'<span class="prod-tag new">Nuevo</span>':''}
+          ${p.b?'<span class="prod-tag bundle">Bundle</span>':''}
+        </div>
+      </div>
+      <div class="prod-cell">
+        <div style="font-size:10px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">SKU</div>
+        <input class="sku-input ${sku?'filled':''}" id="sku-${p._i}" value="${sku}" placeholder="Escribe SKU..." oninput="onSkuInput(${p._i},this.value)" onblur="onSkuBlur(${p._i},this.value)">
+        <div class="sku-hint">${sku?'Asignado':'Pendiente'}</div>
+      </div>
+      <div class="prod-cell">
+        <div style="font-size:10px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Precio</div>
+        <div class="price-num">$${p.p.toLocaleString('es-MX')}</div>
+        <div class="price-meta">${p.q} pz/set${unit}</div>
+      </div>
+      <div class="prod-cell" style="border-right:none">
+        <div style="font-size:10px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Acción</div>
+        <button class="btn-approve ${dec?.a==='approved'?'done':''}" onclick="approve(${p._i})">${dec?.a==='approved'?'✓ Aprobado':'Aprobar'}</button>
+        <button class="btn-skip" onclick="toggleSkip(${p._i})">${dec?.a==='skipped'?'Restaurar':'Omitir'}</button>
+        ${dec?.a?`<div class="dec-label ${dec.a}">${dec.a==='approved'?'Aprobado':'Omitido'}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function onSkuInput(idx,val){
+  const inp=document.getElementById('sku-'+idx);
+  if(inp){inp.className='sku-input'+(val?' filled':'');inp.nextElementSibling.textContent=val?'Asignado':'Pendiente';}
+}
+function onSkuBlur(idx,val){
+  if(!decisions[idx])decisions[idx]={sku:val};
+  else decisions[idx].sku=val;
+  saveLocal();updateStats();renderCatTabs();checkConfig();
+}
+function approve(idx){
+  const sku=document.getElementById('sku-'+idx)?.value||getsku(CATALOG.find(p=>p._i===idx)||{});
+  decisions[idx]={a:'approved',sku};
+  saveLocal();updateStats();renderCatTabs();renderProducts();checkConfig();
+}
+function toggleSkip(idx){
+  if(decisions[idx]?.a==='skipped')delete decisions[idx];
+  else{const sku=getsku(CATALOG.find(p=>p._i===idx)||{});decisions[idx]={a:'skipped',sku};}
+  saveLocal();updateStats();renderCatTabs();renderProducts();checkConfig();
+}
+function setFilter(btn){
+  activeFilter=btn.dataset.f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+function updateStats(){
+  const a=Object.values(decisions).filter(d=>d.a==='approved').length;
+  const s=Object.values(decisions).filter(d=>d.a==='skipped').length;
+  const p=CATALOG.length-Object.keys(decisions).filter(k=>decisions[k].a).length;
+  const done=a+s;const pct=Math.round(done/CATALOG.length*100);
+  document.getElementById('cnt-a').textContent=a;
+  document.getElementById('cnt-s').textContent=s;
+  document.getElementById('cnt-p').textContent=p;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+}
+
+// ─── PDF UPLOAD ──────────────────────────────────────────
+function onDragOver(e){e.preventDefault();document.getElementById('upload-area').classList.add('dragover');}
+function onDrop(e){e.preventDefault();document.getElementById('upload-area').classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')onFileSelect(f);}
+function onFileSelect(f){
+  if(!f)return;
+  if(f.type!=='application/pdf'){alert('Solo se aceptan archivos PDF');return;}
+  if(f.size>25*1024*1024){alert('El archivo supera los 25MB. Comprime el PDF primero.');return;}
+  selectedFile=f;
+  document.getElementById('upload-title').textContent='✓ '+f.name+' ('+Math.round(f.size/1024/1024*10)/10+' MB)';
+  document.getElementById('upload-area').style.borderColor='var(--copper)';
+  document.getElementById('btn-upload').disabled=!config.ghToken;
+}
+
+async function uploadPDF(){
+  if(!selectedFile||!config.ghToken)return;
+  const btn=document.getElementById('btn-upload');
+  btn.disabled=true;btn.textContent='Subiendo...';
+  const pw=document.getElementById('progress-wrap');
+  const pf=document.getElementById('progress-fill');
+  const pl=document.getElementById('progress-label');
+  pw.style.display='block';pf.style.width='20%';pl.textContent='Leyendo archivo...';
+  hideAlerts(['upload-success','upload-error']);
+
+  try{
+    const base64=await fileToBase64(selectedFile);
+    pf.style.width='40%';pl.textContent='Obteniendo versión actual...';
+
+    // Get current file SHA
+    let sha='';
+    try{
+      const r=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/catalogo.pdf`,{
+        headers:{'Authorization':'token '+config.ghToken,'Accept':'application/vnd.github.v3+json'}
+      });
+      if(r.ok){const d=await r.json();sha=d.sha;}
+    }catch(e){}
+
+    pf.style.width='60%';pl.textContent='Subiendo a GitHub...';
+
+    const body={message:'Actualizar catálogo PDF - '+new Date().toLocaleDateString('es-MX'),content:base64};
+    if(sha)body.sha=sha;
+
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/catalogo.pdf`,{
+      method:'PUT',
+      headers:{'Authorization':'token '+config.ghToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+
+    pf.style.width='100%';
+    if(res.ok){
+      pl.textContent='¡Listo!';
+      showAlert('upload-success');
+    } else {
+      const err=await res.json();
+      showAlert('upload-error','Error: '+(err.message||'No se pudo subir el archivo'));
+    }
+  }catch(e){
+    showAlert('upload-error','Error de conexión: '+e.message);
+  }
+  btn.disabled=false;btn.textContent='Publicar en catalogo.aranti.mx';
+}
+
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ─── EXPORT ──────────────────────────────────────────────
+const FM={'Cristalería':'CRISTALERIA','Vajillas':'VAJILLA','Exterior':'EXTERIOR','Revol':'VAJILLA','Cubiertos':'CUBIERTO','Complementos':'COMPLEMENTOS'};
+
+function exportSheets(){
+  const rows=[['Descripcion','Articulo','Descripcion','Familia','Fabricante','Pagina','Catalogo','Multiplo','Precio Venta']];
+  const season=config.seasonName||'PRIMAVERA26';
+  Object.entries(decisions).forEach(([k,d])=>{
+    if(d.a!=='approved')return;
+    const p=CATALOG.find(x=>x._i===parseInt(k));if(!p)return;
+    rows.push([p.n,d.sku||'',p.n,p.b?'SET':(FM[p.c]||p.c.toUpperCase()),'',p.pg,season,p.q,p.p]);
+  });
+  dl(rows,'aranti_sheets_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function exportShopifyCSV(){
+  const rows=[['Handle','Title','Type','Tags','Published','Variant SKU','Variant Price','Variant Inventory Qty','Variant Requires Shipping']];
+  Object.entries(decisions).forEach(([k,d])=>{
+    if(d.a!=='approved')return;
+    const p=CATALOG.find(x=>x._i===parseInt(k));if(!p)return;
+    const h=p.n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    rows.push([h,p.n,p.c,`${p.col},${p.c},Primavera26`,'TRUE',d.sku||'',p.p,100,'TRUE']);
+  });
+  dl(rows,'aranti_shopify_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function dl(rows,name){
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=name;a.click();
+}
+
+// ─── SHOPIFY SYNC ─────────────────────────────────────────
+async function testShopify(){
+  const store=config.shopifyStore;const token=config.shopifyToken;
+  if(!store||!token){showAlert('shopify-test-err','Completa las credenciales primero');return;}
+  try{
+    const r=await fetch(`https://${store}.myshopify.com/admin/api/2024-01/shop.json`,{
+      headers:{'X-Shopify-Access-Token':token,'Content-Type':'application/json'}
+    });
+    if(r.ok){
+      const d=await r.json();
+      document.getElementById('shopify-test-ok').textContent='✓ Conectado a '+d.shop.name;
+      showAlert('shopify-test-ok');hideAlerts(['shopify-test-err']);
+    } else {
+      showAlert('shopify-test-err','Error '+r.status+': Verifica el token y nombre de la tienda');
+      hideAlerts(['shopify-test-ok']);
+    }
+  }catch(e){
+    showAlert('shopify-test-err','Error de conexión. Verifica las credenciales.');
+    hideAlerts(['shopify-test-ok']);
+  }
+}
+
+async function syncShopify(){
+  const store=config.shopifyStore;const token=config.shopifyToken;
+  if(!store||!token)return;
+  const approved=Object.entries(decisions).filter(([k,d])=>d.a==='approved').map(([k,d])=>({p:CATALOG.find(x=>x._i===parseInt(k)),d})).filter(x=>x.p);
+  if(!approved.length){showAlert('shopify-error','No hay productos aprobados para sincronizar.');return;}
+
+  const btn=document.getElementById('btn-sync');
+  btn.disabled=true;btn.textContent='Sincronizando...';
+  hideAlerts(['shopify-success','shopify-error']);
+  const results=document.getElementById('shopify-results');
+  results.style.display='block';results.innerHTML='';
+
+  let ok=0,err=0;
+  for(const {p,d} of approved){
+    try{
+      const productData={product:{title:p.n,product_type:p.c,tags:[p.col,p.c,'Primavera26'].join(','),variants:[{sku:d.sku||'',price:String(p.p),inventory_management:'shopify'}]}};
+      const r=await fetch(`https://${store}.myshopify.com/admin/api/2024-01/products.json`,{
+        method:'POST',
+        headers:{'X-Shopify-Access-Token':token,'Content-Type':'application/json'},
+        body:JSON.stringify(productData)
+      });
+      if(r.ok){
+        ok++;
+        results.innerHTML+=`<div class="result-item result-ok">✓ ${p.n}</div>`;
+      } else {
+        err++;
+        results.innerHTML+=`<div class="result-item result-err">✗ ${p.n} — Error ${r.status}</div>`;
+      }
+    }catch(e){
+      err++;
+      results.innerHTML+=`<div class="result-item result-err">✗ ${p.n} — ${e.message}</div>`;
+    }
+    await new Promise(r=>setTimeout(r,300));
+  }
+  btn.disabled=false;btn.textContent='Sincronizar con Shopify';
+  if(ok>0)showAlert('shopify-success',`✓ ${ok} producto${ok>1?'s':''} sincronizado${ok>1?'s':''} correctamente.${err>0?' '+err+' con error.':''}`);
+  if(ok===0&&err>0)showAlert('shopify-error',`${err} errores. Verifica las credenciales.`);
+}
+
+// ─── HELPERS ─────────────────────────────────────────────
+function showAlert(id,msg){const el=document.getElementById(id);if(!el)return;if(msg)el.textContent=msg;el.style.display='block';}
+function hideAlerts(ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+
+function resetSeason(){
+  if(!confirm('¿Seguro? Esto borra todo el progreso de revisión actual.'))return;
+  decisions={};saveLocal();updateStats();renderCatTabs();renderProducts();checkConfig();
+}
+</script>
+</body>
+</html>
