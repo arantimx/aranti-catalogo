@@ -885,6 +885,7 @@ function renderProducts(){
 function cardHtml(p){
   const status=getStatus(p);
   const sku=getsku(p);
+  const rev=reviews[p.id];
   const col=p.collection||p.col||'';
   const price=rev?.price_override||(p.price||p.p||0);
   const qty=p.quantity||p.q||1;
