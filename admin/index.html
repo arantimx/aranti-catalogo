@@ -886,8 +886,8 @@ function cardHtml(p){
   const status=getStatus(p);
   const sku=getsku(p);
   const col=p.collection||p.col||'';
+  const price=rev?.price_override||(p.price||p.p||0);
   const qty=p.quantity||p.q||1;
-  const price=p.price||p.p||0;
   const pg=p.page||p.pg||'';
   const bundle=p.is_bundle||p.b;
   const hasOrigSku=!!p.sku;
@@ -909,8 +909,8 @@ function cardHtml(p){
       </div>
       <div class="prod-cell">
         <div style="font-size:10px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Precio</div>
-        <div class="price-num">$${price.toLocaleString('es-MX')}</div>
-        <div class="price-meta">${qty} pz/set${unit}</div>
+        <input class="sku-input" id="price-${p.id}" value="${rev?.price_override||price}" placeholder="0" style="font-family:inherit;font-size:14px;font-weight:400" oninput="onPriceInput(${p.id},this.value)" onblur="onPriceBlur(${p.id},this.value)">
+        <div class="sku-hint">${qty} pz/set${unit}</div>
       </div>
       <div class="prod-cell" style="border-right:none">
         <div style="font-size:10px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Acción</div>
@@ -922,7 +922,27 @@ function cardHtml(p){
   </div>`;
 }
 
-function onSkuInput(id,val){
+function onPriceInput(id,val){
+  const inp=document.getElementById('price-'+id);
+  if(inp) inp.style.borderColor=val&&!isNaN(val)?'var(--copper)':'var(--red)';
+}
+function onPriceBlur(id,val){
+  const price=parseInt(val);
+  if(!price||isNaN(price))return;
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>savePriceReview(id,price),800);
+}
+async function savePriceReview(productId,price){
+  if(!seasonId)return;
+  setSyncStatus('syncing','Guardando precio...');
+  try{
+    const existing=reviews[productId];
+    const data={product_id:productId,season_id:seasonId,status:existing?existing.status:'pending',sku_override:existing?existing.sku_override:null,price_override:price,reviewed_at:new Date().toISOString()};
+    if(existing){await sb(`reviews?id=eq.${existing.id}`,'PATCH',data);reviews[productId]={...existing,...data};}
+    else{const res=await sb('reviews','POST',data);if(res&&res[0])reviews[productId]=res[0];else reviews[productId]=data;}
+    setSyncStatus('ok','Precio guardado');
+  }catch(e){setSyncStatus('error','Error al guardar precio');}
+}
   const inp=document.getElementById('sku-'+id);
   if(inp){inp.className='sku-input'+(val?' filled':'');inp.nextElementSibling.textContent=val?'Asignado':'Pendiente';}
 }
@@ -1049,7 +1069,7 @@ function exportSheets(){
   approved.forEach(rev=>{
     const p=products.find(x=>x.id===rev.product_id);if(!p)return;
     const cat=p.category||p.c||'';
-    rows.push([p.name,rev.sku_override||p.sku||'',p.name,p.is_bundle||p.b?'SET':(FM[cat]||cat.toUpperCase()),'',p.page||p.pg||'',season,p.quantity||p.q||1,p.price||p.p||0]);
+    rows.push([p.name,rev.sku_override||p.sku||'',p.name,p.is_bundle||p.b?'SET':(FM[cat]||cat.toUpperCase()),'',p.page||p.pg||'',season,p.quantity||p.q||1,rev.price_override||(p.price||p.p||0)]);
   });
   dl(rows,'aranti_sheets_'+new Date().toISOString().slice(0,10)+'.csv');
 }
@@ -1060,7 +1080,7 @@ function exportShopifyCSV(){
     const p=products.find(x=>x.id===rev.product_id);if(!p)return;
     const h=p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const cat=p.category||p.c||'';
-    rows.push([h,p.name,cat,`${p.collection||p.col||''},${cat},Primavera26`,'TRUE',rev.sku_override||p.sku||'',p.price||p.p||0,100]);
+    rows.push([h,p.name,cat,`${p.collection||p.col||''},${cat},Primavera26`,'TRUE',rev.sku_override||p.sku||'',rev.price_override||(p.price||p.p||0),100]);
   });
   dl(rows,'aranti_shopify_'+new Date().toISOString().slice(0,10)+'.csv');
 }
