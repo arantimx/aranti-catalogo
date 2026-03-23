@@ -757,7 +757,7 @@ async function init(){
       await seedProducts();
     }
     // Load all products
-    const prods = await sb('products?order=category,collection,name&limit=1000');
+    const prods = await sb('products?order=page,name&limit=1000');
     products = prods || [];
     // Load reviews for this season
     if(seasonId){
