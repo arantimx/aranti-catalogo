@@ -943,6 +943,7 @@ async function savePriceReview(productId,price){
     setSyncStatus('ok','Precio guardado');
   }catch(e){setSyncStatus('error','Error al guardar precio');}
 }
+function onSkuInput(id,val){
   const inp=document.getElementById('sku-'+id);
   if(inp){inp.className='sku-input'+(val?' filled':'');inp.nextElementSibling.textContent=val?'Asignado':'Pendiente';}
 }
