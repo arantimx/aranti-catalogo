@@ -873,6 +873,7 @@ function renderProducts(){
   const list=document.getElementById('prod-list');
   const q=(document.getElementById('search')||{}).value||'';
   let prods=products.filter(p=>(p.category||p.c)===activeCat);
+  prods.sort((a,b)=>(a.page||a.pg||0)-(b.page||b.pg||0));
   if(q) prods=prods.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||(p.collection||p.col||'').toLowerCase().includes(q.toLowerCase()));
   if(activeFilter==='pending') prods=prods.filter(p=>getStatus(p)==='pending');
   if(activeFilter==='approved') prods=prods.filter(p=>getStatus(p)==='approved');
