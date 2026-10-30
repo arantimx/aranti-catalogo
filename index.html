@@ -241,8 +241,14 @@ window.addEventListener('keydown', e => {
 
 // Abre directo en una sección o página: catalogo.aranti.mx/#vajillas o /#p40
 if (location.hash) {
-  const t = document.getElementById(location.hash.slice(1));
-  if (t) requestAnimationFrame(() => t.scrollIntoView());
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  let movido = false;
+  addEventListener('wheel', () => movido = true, {once: true, passive: true});
+  addEventListener('touchstart', () => movido = true, {once: true, passive: true});
+  const ir = () => { const t = document.getElementById(location.hash.slice(1)); if (t && !movido) t.scrollIntoView(); };
+  requestAnimationFrame(ir);
+  setTimeout(ir, 300);
+  addEventListener('load', ir);
 }
 </script>
 </body>
