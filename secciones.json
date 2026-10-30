@@ -1,0 +1,9 @@
+[
+  {"id": "inicio", "nombre": "Catálogo", "pagina": 1},
+  {"id": "cristaleria", "nombre": "Cristalería", "pagina": 3},
+  {"id": "vajillas", "nombre": "Vajillas", "pagina": 56},
+  {"id": "exterior", "nombre": "Exterior", "pagina": 83},
+  {"id": "revol", "nombre": "Revol", "pagina": 92},
+  {"id": "cubiertos", "nombre": "Cubiertos", "pagina": 100},
+  {"id": "complementos", "nombre": "Complementos", "pagina": 111}
+]
