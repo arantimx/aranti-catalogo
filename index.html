@@ -206,9 +206,9 @@ for (let i = 1; i <= TOTAL; i++) {
   img.loading = i <= 2 ? 'eager' : 'lazy';
   img.onload = () => fig.classList.add('loaded');
   img.onerror = () => { setTimeout(() => { img.src = img.src.split('?')[0] + '?r=' + Date.now(); }, 1500); };
-  img.src = CARPETA + '/' + n + '.webp';
   fig.appendChild(img);
   main.appendChild(fig);
+  img.src = CARPETA + '/' + n + '.webp';  // va después de insertarla para que la carga diferida funcione
 }
 
 const pages = [...main.children];
